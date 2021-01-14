@@ -105,3 +105,4 @@ dist
 
 #####
 note.txt
+src/utilities/server/credentials.ts
