@@ -1,6 +1,5 @@
-import { apiKeys } from "./keys"
-import { TApiType } from "./meta"
-import { TCommonReqFields } from "./meta_request"
+import { TApiType, TPeriod } from "./meta"
+import { TResp_market_tickers } from "./meta_response"
 
 export const parenthesesFilled = (before: string, content: string) => {
     let res = before
@@ -31,11 +30,39 @@ export const matchLast = (str1: string, str2: string) => {
     return true
 }
 
-export function getCommonReqFieldsData(type: TApiType): TCommonReqFields {
-    return {
-        AccessKeyId: type == 'read' ? apiKeys.forRead.accessKey : apiKeys.forTrade.accessKey,
-        SignatureMethod: 'HmacSHA256',
-        SignatureVersion: 2,
-        Timestamp: getCurrentDateTimeString()
+export const topSymbols = (data: TResp_market_tickers, num: number, base?: string) => {
+    let baseCoin = base ?? 'usdt'
+    let usdttickers = data.filter(v => matchLast(v.symbol, baseCoin))
+    let topten = usdttickers
+        .sort((a, b) => {
+            let aa = a.close / a.open - 1
+            let bb = b.close / b.open - 1
+            return bb - aa
+        })
+        .filter((v, i) => i < num)
+        .map(x => {
+            return {
+                symbol: x.symbol,
+                rate: x.close / x.open - 1
+            }
+        })
+    return topten
+}
+
+export const toSubscriptionStr = (symbol: string, period: TPeriod) => `market.${symbol}.kline.${period}`
+
+export const added = <T>(arr: Array<T>, brr: Array<T>) => {
+    let res: Array<T> = []
+    for (const u of brr) {
+        if (arr.findIndex(x => x == u) == -1) res.push(u)
     }
+    return res
+}
+
+export const removed = <T>(arr: Array<T>, brr: Array<T>) => {
+    let res: Array<T> = []
+    for (const u of arr) {
+        if (brr.findIndex(x => x == u) == -1) res.push(u)
+    }
+    return res
 }

@@ -1,9 +1,10 @@
+import { huobiwss } from "../shared/constants"
 import { ISub, IPing, IPong } from "../shared/meta"
 
 export let hbsocket: WebSocket
 
 export function openSocket() {
-    hbsocket = new WebSocket('wss://api.huobi.pro/ws')
+    hbsocket = new WebSocket(huobiwss)
 
     let sub: ISub = {
         sub: 'market.btcusdt.kline.5min',

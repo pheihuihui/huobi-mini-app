@@ -1,4 +1,5 @@
 import { backgroundImage_dark } from "./style/themes"
+import { to64_browser } from "./utilities/client/helper_browser"
 import { createRestRequestFromBrowser } from "./utilities/client/request"
 
 let canv = document.createElement('canvas')
@@ -10,12 +11,12 @@ document.body.style.backgroundImage = backgroundImage_dark
 declare global {
     interface Window {
         createRestRequestFromBrowser: any
-        num1: number
-        num2: number
+        to64: any
     }
 }
 
 window.createRestRequestFromBrowser = createRestRequestFromBrowser
+window.to64 = to64_browser
 
 let ctx = canv.getContext('2d')
 if (ctx) {

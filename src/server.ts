@@ -1,4 +1,5 @@
 import * as http from 'http'
+import { retrievedSecret } from './utilities/server/key_vault';
 
 // Create an instance of the http server to handle HTTP requests
 let app = http.createServer((req, res) => {
@@ -13,3 +14,8 @@ let app = http.createServer((req, res) => {
 const port = process.env.PORT || 3000
 app.listen(port)
 
+console.log('//////////////////////////////////')
+retrievedSecret('huobi-read-access').then(x => {
+    console.log(x)
+    console.log('//////////////////////////////////')
+})

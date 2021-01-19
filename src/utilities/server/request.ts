@@ -1,10 +1,10 @@
 import { urlPrefix } from '../shared/constants'
-import { parenthesesFilled, getCommonReqFieldsData } from '../shared/helper'
-import { apiKeys } from '../shared/keys'
+import { parenthesesFilled } from '../shared/helper'
 import { IRequestNameMap, TReqParas, requestInfoMap, TReqMethod, TApiType } from '../shared/meta'
 import nfetch, { Response } from 'node-fetch'
-import { to64_node } from './helper_node'
+import { getCommonReqFieldsData, to64_node } from './helper_node'
 import { TReqBase } from '../shared/meta_request'
+import { huobi_read_secret, huobi_trade_secret } from './credentials'
 
 export async function createNewRestRequestFromNode<K extends keyof IRequestNameMap>(reqName: K, paras: TReqParas<K>) {
     let reqInfo = requestInfoMap[reqName]
@@ -44,7 +44,7 @@ function buildUrlFromOnlyCommonFields(method: TReqMethod, reqName: string, pathP
     let part2 = ""
     if (method == 'GET') part2 = 'GET\napi.huobi.pro\n' + reqname + '\n' + part1
     if (method == 'POST') part2 = 'POST\napi.huobi.pro\n' + reqname + '\n' + part1
-    let scrtk = method == 'GET' ? apiKeys.forRead.secretKey : apiKeys.forTrade.secretKey
+    let scrtk = method == 'GET' ? huobi_read_secret : huobi_trade_secret
     let part3 = to64_node(part2, scrtk)
     return `${reqname}?${part1}&Signature=${part3}`
 }
@@ -58,6 +58,6 @@ function buildUrlFromAllFields_GET(reqName: string, jsonParas: Record<string, bo
     let keys = Object.keys(obj).sort()
     let part1 = keys.map(x => `${x}=${obj[x].toString()}`).join('&')
     let part2 = 'GET\napi.huobi.pro\n' + reqname + '\n' + part1
-    let part3 = to64_node(part2, apiKeys.forRead.secretKey)
+    let part3 = to64_node(part2, huobi_trade_secret)
     return `${reqname}?${part1}&Signature=${part3}`
 }

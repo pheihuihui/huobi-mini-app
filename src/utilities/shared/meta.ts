@@ -33,6 +33,11 @@ export interface ISub {
     id: string
 }
 
+export interface IUnsub {
+    unsub: string
+    id: string
+}
+
 export type TApiType = 'read' | 'trade'
 export type TReqMethod = 'GET' | 'POST'
 export type TReqInfo = {
@@ -52,6 +57,8 @@ export type TReqRespPair<T, U> = {
     request: T
     response: U
 }
+
+export type TPeriod = '1min' | '5min' | '15min' | '30min' | '60min' | '4hour' | '1day' | '1mon' | '1week' | '1year'
 
 export interface IRequestNameMap {
     '/v1/order/orders': TReq_v1_order_orders

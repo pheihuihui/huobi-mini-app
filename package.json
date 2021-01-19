@@ -5,7 +5,6 @@
   "main": "index.js",
   "scripts": {
     "build:client": "webpack --env type=client",
-    "build:server": "webpack --env type=server",
     "test": "ts-node --project ./tsconfig.server.json ./src/server_test.ts",
     "start": "ts-node --project ./tsconfig.server.json ./src/server.ts"
   },
@@ -20,12 +19,17 @@
   },
   "homepage": "https://github.com/pheihuihui/huobi-mini-app#readme",
   "dependencies": {
+    "@azure/identity": "^1.2.2",
+    "@azure/keyvault-secrets": "^4.1.0",
+    "@types/node-cron": "^2.0.3",
+    "@types/ws": "^7.4.0",
     "mongodb": "^3.6.3",
+    "node-cron": "^2.0.3",
     "node-fetch": "^2.6.1",
     "node-global-proxy": "^1.0.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
-    "socket.io": "^3.0.5"
+    "ws": "^7.4.2"
   },
   "devDependencies": {
     "@types/copy-webpack-plugin": "^6.4.0",
