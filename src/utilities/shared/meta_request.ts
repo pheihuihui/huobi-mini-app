@@ -36,6 +36,8 @@ export type TReq_v1_account_accounts_$account_id$_balance = never
 
 export type TReq_v1_common_currencys = never
 
+export type TReq_v2_common_currencys = never
+
 export type TReq_v1_order_orders_place = {
     'account-id': string
     symbol: string

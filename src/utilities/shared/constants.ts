@@ -3,6 +3,8 @@ export const baseCoin = 'usdt'
 export const apiDomain = 'api.huobi.pro'
 export const huobiwss = 'wss://api.huobi.pro/ws'
 export const localProxy = 'http://127.0.0.1:10800'
+export const mongoDbName = 'HuobiData'
+export const mongoCollectionName = 'HuobiColl'
 export const requestNames = [
     '/v1/order/orders',
     '/v1/common/symbols',
@@ -11,5 +13,6 @@ export const requestNames = [
     '/v2/account/asset-valuation',
     '/v1/account/accounts/{account-id}/balance',
     '/v1/common/currencys',
+    '/v2/common/currencys',
     '/v1/order/orders/place'
 ] as const

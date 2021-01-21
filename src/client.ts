@@ -1,12 +1,18 @@
-import { backgroundImage_dark } from "./style/themes"
+import { backgroundImage_dark } from "./view/themes"
 import { to64_browser } from "./utilities/client/helper_browser"
 import { createRestRequestFromBrowser } from "./utilities/client/request"
+import { render } from "react-dom"
+import { group } from "./view/ButtonGroup"
 
 let canv = document.createElement('canvas')
 canv.style.height = '100'
 canv.style.width = '100'
 document.body.appendChild(canv)
 document.body.style.backgroundImage = backgroundImage_dark
+
+let ele = document.createElement('div')
+render(group, ele)
+document.body.appendChild(ele)
 
 declare global {
     interface Window {

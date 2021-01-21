@@ -50,10 +50,10 @@ export class MarketObserver {
         for (const key in this.prices) {
             if (Object.prototype.hasOwnProperty.call(this.prices, key)) {
                 const element = this.prices[key]
-                if (element.isRising()) {
+                if (element.getState() == 'rising') {
                     this.onRise.emit('buy', key, tick.close, time)
                 }
-                if (element.isFalling()) {
+                if (element.getState() == 'falling') {
                     this.onFall.emit('sell', key, tick.close, time)
                 }
             }

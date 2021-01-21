@@ -47,6 +47,8 @@ export type TResp_v1_account_accounts_$account_id$_balance = {
 
 export type TResp_v1_common_currencys = Array<string>
 
+export type TResp_v2_common_currencys = Array<string>
+
 export type TResp_v1_order_orders_place = string
 
 export type TResp_market_tickers = Array<{

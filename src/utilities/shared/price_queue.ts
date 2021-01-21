@@ -2,19 +2,19 @@ export class PriceQueue {
     private prices: Record<number, [number, boolean]>
     private lastUpdateTime: number
     private maxLength: number
-    private rising: boolean
-    private falling: boolean
     private growthRate: number
     private reductionRate: number
+    private state: 'rising' | 'falling' | 'floatingup' | 'floatingdown'
+    private top: number
 
     constructor(maxLength: number, growth: number, reduction: number) {
         this.prices = {}
         this.lastUpdateTime = 0
         this.maxLength = maxLength
-        this.rising = false
         this.growthRate = growth
-        this.falling = false
         this.reductionRate = reduction
+        this.state = 'floatingdown'
+        this.top = -1
     }
 
     getLastUpdateTime() {
@@ -25,12 +25,8 @@ export class PriceQueue {
         return Object.keys(this.prices).length
     }
 
-    isRising() {
-        return this.rising
-    }
-
-    isFalling() {
-        return this.falling
+    getState() {
+        return this.state
     }
 
     push(time: number, price: number) {
@@ -39,28 +35,12 @@ export class PriceQueue {
             delete this.prices[keys[0]]
         }
         this.lastUpdateTime = time
-        if (keys.length == 0) {
-            this.prices[time] = [price, true]
-        } else {
-            let lastTime = keys[keys.length - 1]
-            let latestPrice = this.prices[lastTime][0]
-            let rate = (price - latestPrice) / (time - lastTime)
-            if (rate > this.growthRate) {
-                this.prices[time] = [price, true]
-            } else {
-                this.prices[time] = [price, false]
-                if (rate < this.reductionRate) {
-                    this.falling = true
-                } else {
-                    this.falling = false
-                }
-            }
+
+        if (this.state == 'falling') {
+
         }
-        let vals = Object.values(this.prices).map(x => x[1])
-        if (vals.length == this.maxLength && vals.findIndex(v => v == false) == -1) {
-            this.rising = true
-        } else {
-            this.rising = false
-        }
+
+
+
     }
 }

@@ -10,9 +10,9 @@ export async function createNewRestRequestFromNode<K extends keyof IRequestNameM
     let reqInfo = requestInfoMap[reqName]
     let url = ''
     if (reqInfo.method == 'GET' && paras.json) {
-        url = await buildUrlFromAllFields_GET(reqName, paras.json as TReqBase, paras.path)
+        url = buildUrlFromAllFields_GET(reqName, paras.json as TReqBase, paras.path)
     } else {
-        url = await buildUrlFromOnlyCommonFields(reqInfo.method, reqName, paras.path)
+        url = buildUrlFromOnlyCommonFields(reqInfo.method, reqName, paras.path)
     }
     let info: { url: string, init?: { method: string, body?: string } }
     if (paras.json) {

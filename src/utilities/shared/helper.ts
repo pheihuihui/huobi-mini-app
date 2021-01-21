@@ -51,18 +51,18 @@ export const topSymbols = (data: TResp_market_tickers, num: number, base?: strin
 
 export const toSubscriptionStr = (symbol: string, period: TPeriod) => `market.${symbol}.kline.${period}`
 
-export const added = <T>(arr: Array<T>, brr: Array<T>) => {
+export const added = <T>(oldArr: Array<T>, newArr: Array<T>) => {
     let res: Array<T> = []
-    for (const u of brr) {
-        if (arr.findIndex(x => x == u) == -1) res.push(u)
+    for (const u of newArr) {
+        if (oldArr.findIndex(x => x == u) == -1) res.push(u)
     }
     return res
 }
 
-export const removed = <T>(arr: Array<T>, brr: Array<T>) => {
+export const removed = <T>(oldArr: Array<T>, newArr: Array<T>) => {
     let res: Array<T> = []
-    for (const u of arr) {
-        if (brr.findIndex(x => x == u) == -1) res.push(u)
+    for (const u of oldArr) {
+        if (newArr.findIndex(x => x == u) == -1) res.push(u)
     }
     return res
 }

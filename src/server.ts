@@ -1,5 +1,5 @@
 import * as http from 'http'
-import { retrievedSecret } from './utilities/server/key_vault';
+import { cron_every_hour } from './utilities/server/schedules';
 
 // Create an instance of the http server to handle HTTP requests
 let app = http.createServer((req, res) => {
@@ -10,12 +10,7 @@ let app = http.createServer((req, res) => {
     res.end('Hello World!\n')
 });
 
+cron_every_hour.start()
 // Start the server on port 3000
 const port = process.env.PORT || 3000
 app.listen(port)
-
-console.log('//////////////////////////////////')
-retrievedSecret('huobi-read-access').then(x => {
-    console.log(x)
-    console.log('//////////////////////////////////')
-})

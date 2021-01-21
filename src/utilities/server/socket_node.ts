@@ -2,7 +2,6 @@ import { huobiwss } from "../shared/constants"
 import { ISub, IPing, IPong, IUnsub } from "../shared/meta"
 import nWebSocket from 'ws'
 import { gunzip } from 'zlib'
-import ncron from 'node-cron'
 import { createNewRestRequestFromNode } from "./request"
 import { TPromiseRespV1, TResp_market_tickers } from "../shared/meta_response"
 import { added, removed, topSymbols, toSubscriptionStr } from "../shared/helper"
@@ -10,32 +9,6 @@ import { MarketObserver } from "./observer"
 import { TTick } from "../shared/meta_socket"
 
 export let n_hbsocket: nWebSocket
-export let top10: string[] = []
-
-const cron = ncron.schedule('1 * * * * *', () => {
-    createNewRestRequestFromNode('/market/tickers', {})
-        .then(x => x.json() as TPromiseRespV1<TResp_market_tickers>)
-        .then(x => {
-            let subs = topSymbols(x.data, 10).map(v => toSubscriptionStr(v.symbol, '1day'))
-            let addedSubs = added(top10, subs)
-            let removedSubs = removed(top10, subs)
-            top10 = subs
-            addedSubs.forEach(v => {
-                let req: ISub = {
-                    sub: v,
-                    id: 'myid'
-                }
-                n_hbsocket.send(JSON.stringify(req))
-            })
-            removedSubs.forEach(v => {
-                let req: IUnsub = {
-                    unsub: v,
-                    id: 'myid'
-                }
-                n_hbsocket.send(JSON.stringify(req))
-            })
-        })
-})
 
 const observer = MarketObserver.getInstance()
 
@@ -43,17 +16,17 @@ export function openNodeWebSocket() {
     n_hbsocket = new nWebSocket(huobiwss)
 
     n_hbsocket.onopen = () => {
-        cron.start()
+        // cron.start()
         observer.attachStrategyOnRise((symbol, price, time) => {
-            console.log(`rising...\n`)
+            console.log(`rising...\n\t${symbol}\n\t${price}\n\t${time}\n`)
         })
         observer.attachStrategyOnFall((symbol, price, time) => {
-            console.log(`falling...\n`)
+            console.log(`falling...\n\t${symbol}\n\t${price}\n\t${time}\n`)
         })
     }
 
     n_hbsocket.onclose = () => {
-        cron.stop()
+        // cron.stop()
         observer.removeAllStrategies()
     }
 

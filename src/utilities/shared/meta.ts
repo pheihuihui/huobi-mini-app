@@ -8,7 +8,8 @@ import {
     TReq_v1_order_orders,
     TReq_v1_order_orders_$order_id$,
     TReq_v1_order_orders_place,
-    TReq_v2_account_asset_valuation
+    TReq_v2_account_asset_valuation,
+    TReq_v2_common_currencys
 } from './meta_request'
 import {
     TResp_v1_account_accounts,
@@ -70,6 +71,7 @@ export interface IRequestNameMap {
     '/v1/common/currencys': TReq_v1_common_currencys
     '/v1/order/orders/place': TReq_v1_order_orders_place
     '/market/tickers': TReq_market_tickers
+    '/v2/common/currencys': TReq_v2_common_currencys
 }
 
 export interface IRequestAndResponseMap {
@@ -92,5 +94,6 @@ export const requestInfoMap: Record<keyof IRequestNameMap, TReqInfo> = {
     '/v1/account/accounts/{account-id}/balance': { needAuth: true, paras: 'path', method: 'GET', version: 'v1' },
     '/v1/common/currencys': { needAuth: false, paras: 'none', method: 'GET', version: 'v1' },
     '/v1/order/orders/place': { needAuth: true, paras: 'json', method: 'POST', version: 'v1' },
-    '/market/tickers': { needAuth: false, paras: 'none', method: 'GET', version: 'none' }
+    '/market/tickers': { needAuth: false, paras: 'none', method: 'GET', version: 'none' },
+    '/v2/common/currencys': { needAuth: false, paras: 'none', method: 'GET', version: 'v2' }
 }
