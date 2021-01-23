@@ -1,7 +1,7 @@
 // import { loop_price_queue } from "./test/test_price_queue";
 
 import proxy from "node-global-proxy";
-import { global, initGlobalStatus } from "./utilities/server/global";
+import { globals, initGlobalStatus } from "./utilities/server/global";
 import { TCurrencys } from "./utilities/server/meta_mongo";
 import { HuobiDataManager, read_allCurrencys, read_currencys } from "./utilities/server/mongo_client";
 import { retrieveHuobiResponse } from "./utilities/server/request";

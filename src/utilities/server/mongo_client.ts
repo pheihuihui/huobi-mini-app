@@ -1,5 +1,5 @@
 import { MongoClient } from 'mongodb'
-import { global } from './global'
+import { globals } from './global'
 import { TAllCurrencys, TCurrencys } from './meta_mongo'
 import { retrieveHuobiResponse } from './request'
 
@@ -19,7 +19,7 @@ export class HuobiDataManager {
 
     private static connectDB() {
         return new Promise(resolve => {
-            MongoClient.connect(global.secrets.cosmosConnStr, { useUnifiedTopology: true }, (err, client) => {
+            MongoClient.connect(globals.secrets.cosmosConnStr, { useUnifiedTopology: true }, (err, client) => {
                 this.client = client
                 return resolve(client)
             })
@@ -32,8 +32,8 @@ export async function read_allCurrencys() {
     let db = client.db(mongoDbName)
     let coll = db.collection<TAllCurrencys>(mongo_coll_name_all_currencys)
     let dt = await coll.findOne({}, { sort: { ts: -1 } })
-    global.allCurrencys = dt?.allCurrencys ?? []
-    global.allCurrencysCount = dt?.count ?? 0
+    globals.allCurrencys = dt?.allCurrencys ?? []
+    globals.allCurrencysCount = dt?.count ?? 0
 }
 
 export async function read_currencys() {
@@ -41,8 +41,8 @@ export async function read_currencys() {
     let db = client.db(mongoDbName)
     let coll = db.collection<TCurrencys>(mongo_coll_name_currencys)
     let dt = await coll.findOne({}, { sort: { ts: -1 } })
-    global.currencys = dt?.currencys ?? []
-    global.currencysCount = dt?.length ?? 0
+    globals.currencys = dt?.currencys ?? []
+    globals.currencysCount = dt?.length ?? 0
 }
 
 export async function update_currencys(data: TCurrencys) {

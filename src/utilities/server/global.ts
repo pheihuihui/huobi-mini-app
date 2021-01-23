@@ -22,7 +22,7 @@ type TGlobalServerStatus = {
     }
 }
 
-export const global: TGlobalServerStatus = {
+export const globals: TGlobalServerStatus = {
     socket: null,
     top10: [],
     state: 'free',
@@ -43,13 +43,13 @@ export const global: TGlobalServerStatus = {
 
 export async function initGlobalStatus() {
     if (process.env.ENV_NAME && process.env.ENV_NAME == 'CLOUD') {
-        global.secrets.cosmosConnStr = await retrieveSecret('cosmosConnStr')
-        global.secrets.huobi_read_access = await retrieveSecret('huobi_read_access')
-        global.secrets.huobi_read_secret = await retrieveSecret('huobi_read_secret')
-        global.secrets.huobi_trade_access = await retrieveSecret('huobi_trade_access')
-        global.secrets.huobi_trade_secret = await retrieveSecret('huobi_trade_secret')
+        globals.secrets.cosmosConnStr = await retrieveSecret('cosmosConnStr')
+        globals.secrets.huobi_read_access = await retrieveSecret('huobi_read_access')
+        globals.secrets.huobi_read_secret = await retrieveSecret('huobi_read_secret')
+        globals.secrets.huobi_trade_access = await retrieveSecret('huobi_trade_access')
+        globals.secrets.huobi_trade_secret = await retrieveSecret('huobi_trade_secret')
     } else {
-        global.secrets = {
+        globals.secrets = {
             huobi_read_access: huobi_read_access,
             huobi_read_secret: huobi_read_secret,
             huobi_trade_access: huobi_trade_access,

@@ -2,7 +2,7 @@ import ncron from 'node-cron'
 import { topSymbols, toSubscriptionStr, added, removed } from '../shared/helper'
 import { ISub, IUnsub } from '../shared/meta'
 import { TPromiseRespV1, TResp_market_tickers, TResp_v1_common_currencys } from '../shared/meta_response'
-import { global } from './global'
+import { globals } from './global'
 import { update_currencys, write_logs } from './mongo_client'
 import { retrieveHuobiResponse } from './request'
 import { n_hbsocket } from './socket_node'
@@ -12,9 +12,9 @@ export const cron_every_minute = ncron.schedule('30 * * * * *', () => {
     retrieveHuobiResponse('/market/tickers', {})
         .then(x => {
             let subs = topSymbols(x.data, 10).map(v => toSubscriptionStr(v.symbol, '1day'))
-            let addedSubs = added(global.top10, subs)
-            let removedSubs = removed(global.top10, subs)
-            global.top10 = subs
+            let addedSubs = added(globals.top10, subs)
+            let removedSubs = removed(globals.top10, subs)
+            globals.top10 = subs
             addedSubs.forEach(v => {
                 let req: ISub = {
                     sub: v,
@@ -39,20 +39,20 @@ export const cron_every_hour = ncron.schedule('0 0 * * * *', () => {
             let curs_count = curs.length
             let addedCurs: string[] = []
             let removedCurs: string[] = []
-            if (curs_count > global.currencysCount) {
-                addedCurs = added(global.currencys, curs)
+            if (curs_count > globals.currencysCount) {
+                addedCurs = added(globals.currencys, curs)
                 allIn(addedCurs[0])
             } else {
-                let addedCurs = added(global.currencys, curs)
+                let addedCurs = added(globals.currencys, curs)
                 if (addedCurs.length > 0) {
                     allIn(addedCurs[0])
                 }
             }
-            removedCurs = removed(global.currencys, curs)
+            removedCurs = removed(globals.currencys, curs)
             let unchanged = removedCurs.length == 0 && addedCurs.length == 0
             if (!unchanged) {
-                global.currencysCount = curs_count
-                global.currencys = curs
+                globals.currencysCount = curs_count
+                globals.currencys = curs
                 update_currencys({
                     ts: Date.now(),
                     length: curs_count,

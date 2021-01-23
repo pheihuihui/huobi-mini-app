@@ -6,6 +6,7 @@ import { getCommonReqFieldsData, to64_node } from './helper_node'
 import { TReqBase } from '../shared/meta_request'
 import { huobi_read_secret, huobi_trade_secret } from './credentials'
 import { TPromiseRespV1, TPromiseRespV2, TRespV1, TRespV2 } from '../shared/meta_response'
+import { globals } from './global'
 
 export async function retrieveHuobiResponse<K extends keyof TResponseMap>(reqName: K, paras: TReqParas<K>) {
     let resp = await createRestRequestFromNode(reqName, paras)
@@ -41,7 +42,7 @@ function buildUrlFromOnlyCommonFields(method: TReqMethod, reqName: string, pathP
     let part2 = ""
     if (method == 'GET') part2 = 'GET\napi.huobi.pro\n' + reqname + '\n' + part1
     if (method == 'POST') part2 = 'POST\napi.huobi.pro\n' + reqname + '\n' + part1
-    let scrtk = method == 'GET' ? huobi_read_secret : huobi_trade_secret
+    let scrtk = method == 'GET' ? globals.secrets.huobi_read_secret : globals.secrets.huobi_trade_secret
     let part3 = to64_node(part2, scrtk)
     return `${reqname}?${part1}&Signature=${part3}`
 }
@@ -55,7 +56,7 @@ function buildUrlFromAllFields_GET(reqName: string, jsonParas: Record<string, bo
     let keys = Object.keys(obj).sort()
     let part1 = keys.map(x => `${x}=${obj[x].toString()}`).join('&')
     let part2 = 'GET\napi.huobi.pro\n' + reqname + '\n' + part1
-    let part3 = to64_node(part2, huobi_trade_secret)
+    let part3 = to64_node(part2, globals.secrets.huobi_trade_secret)
     return `${reqname}?${part1}&Signature=${part3}`
 }
 
