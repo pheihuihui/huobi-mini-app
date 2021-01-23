@@ -1,28 +1,19 @@
 // import { loop_price_queue } from "./test/test_price_queue";
 
 import proxy from "node-global-proxy";
-import { init_allCurrencys, read_allCurrencys } from "./utilities/server/mongo_client";
-import { createNewRestRequestFromNode } from "./utilities/server/request";
+import { global, initGlobalStatus } from "./utilities/server/global";
+import { TCurrencys } from "./utilities/server/meta_mongo";
+import { HuobiDataManager, read_allCurrencys, read_currencys } from "./utilities/server/mongo_client";
+import { retrieveHuobiResponse } from "./utilities/server/request";
+import { dropCollection, initDB } from "./utilities/server/scripts";
 import { localProxy } from "./utilities/shared/constants";
 import { added, removed } from "./utilities/shared/helper";
+import { TReq_market_tickers } from "./utilities/shared/meta_request";
 
-// loop_price_queue()
+proxy.setConfig(localProxy)
+proxy.start()
 
-// proxy.setConfig(localProxy)
-// proxy.start()
-
-// createNewRestRequestFromNode('/v1/common/currencys', {})
-//     .then(x => x.json())
-//     .then(x => console.log(x.data.length))
-
-// let x = 0
-// while(x < 10){
-//     write_allCurrencys({ts: Date.now(), length: 10, currencys: ['aa', 'ccc']})
-//     x += 1
-//     console.log(x)
-// }
-
-// read_allCurrencys()
-// init_allCurrencys()
-
-console.log(removed([1, 2, 3], [2, 3, 4]))
+initGlobalStatus().then(async () => {
+    retrieveHuobiResponse('/v1/account/accounts', {})
+        .then(x => console.log(x.data.filter(v => v.type == 'spot')))
+})

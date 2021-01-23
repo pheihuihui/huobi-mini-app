@@ -22,12 +22,12 @@ export type TResp_v1_common_symbols = {
     symbol: string
 }
 
-export type TResp_v1_account_accounts = {
+export type TResp_v1_account_accounts = Array<{
     id: number
     state: string
-    type: string
+    type: 'otc' | 'spot'
     subtype: string
-}
+}>
 
 export type TResp_v2_account_asset_valuation = {
     balance: number

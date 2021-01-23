@@ -1,36 +1,33 @@
 import { urlPrefix } from '../shared/constants'
 import { parenthesesFilled } from '../shared/helper'
-import { IRequestNameMap, TReqParas, requestInfoMap, TReqMethod, TApiType } from '../shared/meta'
+import { TRequestMap, TReqParas, requestInfoMap, TReqMethod, TApiType, TResponseMap, TRequestName } from '../shared/meta'
 import nfetch, { Response } from 'node-fetch'
 import { getCommonReqFieldsData, to64_node } from './helper_node'
 import { TReqBase } from '../shared/meta_request'
 import { huobi_read_secret, huobi_trade_secret } from './credentials'
+import { TPromiseRespV1, TPromiseRespV2, TRespV1, TRespV2 } from '../shared/meta_response'
 
-export async function createNewRestRequestFromNode<K extends keyof IRequestNameMap>(reqName: K, paras: TReqParas<K>) {
+export async function retrieveHuobiResponse<K extends keyof TResponseMap>(reqName: K, paras: TReqParas<K>) {
+    let resp = await createRestRequestFromNode(reqName, paras)
+    let json = await resp.json()
+    type T_v2 = `/v2/${string}`
+    type TResp<T> = T extends T_v2 ? TRespV2<T> : TRespV1<T>
+    return json as TResp<TResponseMap[K]>
+}
+
+async function createRestRequestFromNode<K extends keyof TRequestMap>(reqName: K, paras: TReqParas<K>) {
     let reqInfo = requestInfoMap[reqName]
-    let url = ''
-    if (reqInfo.method == 'GET' && paras.json) {
-        url = buildUrlFromAllFields_GET(reqName, paras.json as TReqBase, paras.path)
-    } else {
-        url = buildUrlFromOnlyCommonFields(reqInfo.method, reqName, paras.path)
-    }
-    let info: { url: string, init?: { method: string, body?: string } }
-    if (paras.json) {
-        info = { url: urlPrefix + url, init: { method: reqInfo.method, body: JSON.stringify(paras.json) } }
-    } else {
-        info = { url: urlPrefix + url, init: { method: reqInfo.method } }
-    }
-
-    let req: Promise<Response>
-    if (info.init && info.init.method == 'POST') {
-        if (info.init.body) {
-            req = nfetch(info.url, { method: 'POST', body: info.init.body, headers: { 'Content-Type': 'application/json' } })
-        } else {
-            req = nfetch(info.url, { method: 'POST' })
-        }
-    } else {
-        req = nfetch(info.url, { method: 'GET' })
-    }
+    let url = (reqInfo.method == 'GET' && paras.json) ?
+        buildUrlFromAllFields_GET(reqName, paras.json as TReqBase, paras.path) :
+        buildUrlFromOnlyCommonFields(reqInfo.method, reqName, paras.path)
+    let info: { url: string, init?: { method: string, body?: string } } = (paras.json) ?
+        { url: urlPrefix + url, init: { method: reqInfo.method, body: JSON.stringify(paras.json) } } :
+        { url: urlPrefix + url, init: { method: reqInfo.method } }
+    let req: Promise<Response> = !(info.init && info.init.method == 'POST') ?
+        nfetch(info.url, { method: 'GET' }) :
+        (info.init.body) ?
+            nfetch(info.url, { method: 'POST', body: info.init.body, headers: { 'Content-Type': 'application/json' } }) :
+            nfetch(info.url, { method: 'POST' })
     return req
 }
 
@@ -61,3 +58,4 @@ function buildUrlFromAllFields_GET(reqName: string, jsonParas: Record<string, bo
     let part3 = to64_node(part2, huobi_trade_secret)
     return `${reqname}?${part1}&Signature=${part3}`
 }
+

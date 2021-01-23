@@ -51,3 +51,5 @@ export type TReq_v1_order_orders_place = {
 }
 
 export type TReq_market_tickers = never
+
+export type TGetResp<T> = any

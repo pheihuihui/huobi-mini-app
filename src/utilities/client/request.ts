@@ -1,12 +1,12 @@
 import { huobi_trade_access } from '../server/credentials'
 import { urlPrefix } from '../shared/constants'
 import { parenthesesFilled } from '../shared/helper'
-import { IRequestNameMap, TReqParas, requestInfoMap, TReqMethod, TApiType } from '../shared/meta'
+import { TRequestMap, TReqParas, requestInfoMap, TReqMethod, TApiType } from '../shared/meta'
 import { TReqBase } from '../shared/meta_request'
 import { huobi_read_secret } from './client_credentials'
 import { getCommonReqFieldsData, to64_browser } from './helper_browser'
 
-export async function createRestRequestFromBrowser<K extends keyof IRequestNameMap>(reqName: K, paras: TReqParas<K>) {
+export async function createRestRequestFromBrowser<K extends keyof TRequestMap>(reqName: K, paras: TReqParas<K>) {
     let reqInfo = requestInfoMap[reqName]
     let url = ''
     if (reqInfo.method == 'GET' && paras.json) {

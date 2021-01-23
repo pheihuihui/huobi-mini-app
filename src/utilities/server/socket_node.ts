@@ -2,7 +2,6 @@ import { huobiwss } from "../shared/constants"
 import { ISub, IPing, IPong, IUnsub } from "../shared/meta"
 import nWebSocket from 'ws'
 import { gunzip } from 'zlib'
-import { createNewRestRequestFromNode } from "./request"
 import { TPromiseRespV1, TResp_market_tickers } from "../shared/meta_response"
 import { added, removed, topSymbols, toSubscriptionStr } from "../shared/helper"
 import { MarketObserver } from "./observer"

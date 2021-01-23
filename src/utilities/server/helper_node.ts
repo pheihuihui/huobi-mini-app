@@ -5,6 +5,7 @@ import { TApiType } from '../shared/meta'
 import { TCommonReqFields } from '../shared/meta_request'
 import { DefaultAzureCredential } from '@azure/identity'
 import { SecretClient } from '@azure/keyvault-secrets'
+
 export function to64_node(key: string, secret: string) {
     let hash = ncrypto.createHmac('sha256', Buffer.from(secret, 'utf-8'))
         .update(key)
@@ -26,5 +27,6 @@ export async function retrieveSecret(secretname: string) {
     const KVUri = "https://" + keyVaultName + ".vault.azure.net"
     const credential = new DefaultAzureCredential()
     const client = new SecretClient(KVUri, credential)
-    return await client.getSecret(secretname)
+    const secret = await client.getSecret(secretname)
+    return secret.value ?? ''
 }

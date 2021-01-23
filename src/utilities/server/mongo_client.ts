@@ -1,10 +1,12 @@
 import { MongoClient } from 'mongodb'
-import { mongoCollectionName, mongoDbName } from '../shared/constants'
-import { TPromiseRespV1, TRespV1, TResp_v1_common_currencys } from '../shared/meta_response'
-import { globalStatus } from './global'
-import { TAllCurrencys } from './meta_mongo'
-import { createNewRestRequestFromNode } from './request'
-import { mongodbstr } from './server_configuration'
+import { global } from './global'
+import { TAllCurrencys, TCurrencys } from './meta_mongo'
+import { retrieveHuobiResponse } from './request'
+
+const mongoDbName = 'HuobiData'
+const mongo_coll_name_currencys = 'coll_currencys'
+const mongo_coll_name_all_currencys = 'coll_all_currencys'
+const mongo_coll_logs = 'coll_logs'
 
 export class HuobiDataManager {
     private static client: MongoClient
@@ -17,7 +19,7 @@ export class HuobiDataManager {
 
     private static connectDB() {
         return new Promise(resolve => {
-            MongoClient.connect(mongodbstr, { useUnifiedTopology: true }, (err, client) => {
+            MongoClient.connect(global.secrets.cosmosConnStr, { useUnifiedTopology: true }, (err, client) => {
                 this.client = client
                 return resolve(client)
             })
@@ -28,46 +30,50 @@ export class HuobiDataManager {
 export async function read_allCurrencys() {
     let client = await HuobiDataManager.getMongoClient()
     let db = client.db(mongoDbName)
-    let coll = db.collection<TAllCurrencys>(mongoCollectionName)
+    let coll = db.collection<TAllCurrencys>(mongo_coll_name_all_currencys)
     let dt = await coll.findOne({}, { sort: { ts: -1 } })
-    globalStatus.currencys = dt?.currencys ?? []
-    globalStatus.currencysCount = dt?.length ?? 0
-    client.close()
+    global.allCurrencys = dt?.allCurrencys ?? []
+    global.allCurrencysCount = dt?.count ?? 0
 }
 
-export async function init_allCurrencys() {
+export async function read_currencys() {
     let client = await HuobiDataManager.getMongoClient()
     let db = client.db(mongoDbName)
-    let coll = db.collection<TAllCurrencys>(mongoCollectionName)
-    coll.createIndex({ ts: 1 })
-    await createNewRestRequestFromNode('/v1/common/currencys', {})
-        .then(x => x.json() as TPromiseRespV1<TResp_v1_common_currencys>)
-        .then(x => {
-            coll.insertOne({
-                ts: Date.now(),
-                length: x.data.length,
-                currencys: x.data
-            })
-        })
-    client.close()
+    let coll = db.collection<TCurrencys>(mongo_coll_name_currencys)
+    let dt = await coll.findOne({}, { sort: { ts: -1 } })
+    global.currencys = dt?.currencys ?? []
+    global.currencysCount = dt?.length ?? 0
 }
 
-export async function update_allCurrencys(data: TAllCurrencys) {
+export async function update_currencys(data: TCurrencys) {
     let client = await HuobiDataManager.getMongoClient()
     let db = client.db(mongoDbName)
-    let coll = db.collection<TAllCurrencys>(mongoCollectionName)
+    let coll = db.collection<TCurrencys>(mongo_coll_name_currencys)
     await coll.insertOne({
         ts: data.ts,
         length: data.currencys.length,
-        currencys: data.currencys
+        currencys: data.currencys,
+        added: data.added,
+        removed: data.removed
     })
-    client.close()
+}
+
+export async function update_allCurrencys(curs: string[]) {
+    let client = await HuobiDataManager.getMongoClient()
+    let db = client.db(mongoDbName)
+    let coll = db.collection<TAllCurrencys>(mongo_coll_name_all_currencys)
+    coll.updateOne({}, {
+        $set: {
+            count: curs.length,
+            allCurrencys: curs
+        }
+    })
 }
 
 export async function write_logs(data: string) {
     let client = await HuobiDataManager.getMongoClient()
     let db = client.db(mongoDbName)
-    let coll = db.collection('logs')
+    let coll = db.collection(mongo_coll_logs)
     await coll.insertOne({
         ts: Date.now(),
         text: data
