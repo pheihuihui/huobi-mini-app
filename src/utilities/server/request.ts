@@ -29,6 +29,7 @@ async function createRestRequestFromNode<K extends keyof TRequestMap>(reqName: K
         (info.init.body) ?
             nfetch(info.url, { method: 'POST', body: info.init.body, headers: { 'Content-Type': 'application/json' } }) :
             nfetch(info.url, { method: 'POST' })
+    console.log((await req).url)
     return req
 }
 
