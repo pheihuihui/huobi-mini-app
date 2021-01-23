@@ -44,10 +44,10 @@ export const globals: TGlobalServerStatus = {
 export async function initGlobalStatus() {
     if (process.env.ENV_NAME && process.env.ENV_NAME == 'CLOUD') {
         globals.secrets.cosmosConnStr = await retrieveSecret('cosmosConnStr')
-        globals.secrets.huobi_read_access = await retrieveSecret('huobi_read_access')
-        globals.secrets.huobi_read_secret = await retrieveSecret('huobi_read_secret')
-        globals.secrets.huobi_trade_access = await retrieveSecret('huobi_trade_access')
-        globals.secrets.huobi_trade_secret = await retrieveSecret('huobi_trade_secret')
+        globals.secrets.huobi_read_access = await retrieveSecret('huobi-read-access')
+        globals.secrets.huobi_read_secret = await retrieveSecret('huobi-read-secret')
+        globals.secrets.huobi_trade_access = await retrieveSecret('huobi-trade-access')
+        globals.secrets.huobi_trade_secret = await retrieveSecret('huobi-trade-secret')
     } else {
         globals.secrets = {
             huobi_read_access: huobi_read_access,
