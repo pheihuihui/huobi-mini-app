@@ -1,6 +1,7 @@
 import nWebSocket from 'ws'
 import { CUSTOMCONNSTR_cosmosstring, huobi_read_access, huobi_read_secret, huobi_trade_access, huobi_trade_secret } from './credentials'
 import { retrieveSecret } from './helper_node'
+import { HuobiDataManager, read_allCurrencys, read_currencys } from './mongo_client'
 import { retrieveHuobiResponse } from './request'
 import { retrieveHoldings } from './trader'
 
@@ -60,6 +61,7 @@ export async function initGlobalStatus() {
     }
     await retrieveAccountID()
     await retrieveHoldings()
+    await retrieveCurrencys()
 }
 
 async function retrieveAccountID() {
@@ -71,4 +73,9 @@ async function retrieveAccountID() {
             }
         })
     }
+}
+
+async function retrieveCurrencys() {
+    await read_currencys()
+    await read_allCurrencys()
 }

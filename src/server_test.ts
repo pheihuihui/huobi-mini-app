@@ -16,5 +16,5 @@ proxy.start()
 
 initGlobalStatus()
     .then(() => {
-        allIn('mdxusdt')
+        
     })
