@@ -6,14 +6,15 @@ import { TCurrencys } from "./utilities/server/meta_mongo";
 import { HuobiDataManager, read_allCurrencys, read_currencys } from "./utilities/server/mongo_client";
 import { retrieveHuobiResponse } from "./utilities/server/request";
 import { dropCollection, initDB } from "./utilities/server/scripts";
+import { allIn, retrieveHoldings } from "./utilities/server/trader";
 import { localProxy } from "./utilities/shared/constants";
-import { added, removed } from "./utilities/shared/helper";
+import { added, removed, sleep } from "./utilities/shared/helper";
 import { TReq_market_tickers } from "./utilities/shared/meta_request";
 
 proxy.setConfig(localProxy)
 proxy.start()
 
-initGlobalStatus().then(async () => {
-    retrieveHuobiResponse('/v1/account/accounts', {})
-        .then(x => console.log(x.data.filter(v => v.type == 'spot')))
-})
+initGlobalStatus()
+    .then(() => {
+        allIn('mdxusdt')
+    })

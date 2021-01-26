@@ -11,7 +11,7 @@ export function to64_node(key: string, secret: string) {
     let hash = ncrypto.createHmac('sha256', Buffer.from(secret, 'utf-8'))
         .update(key)
         .digest('base64')
-    return hash
+    return encodeURIComponent(hash)
 }
 
 export function getCommonReqFieldsData(type: TApiType): TCommonReqFields {

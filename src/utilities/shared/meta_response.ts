@@ -40,7 +40,7 @@ export type TResp_v1_account_accounts_$account_id$_balance = {
     type: string //
     list: Array<{
         currency: string
-        type: string
+        type: 'trade' | 'frozen' | 'loan' | 'interest' | 'lock' | 'bank'
         balance: number
     }>
 }
@@ -65,3 +65,22 @@ export type TResp_market_tickers = Array<{
     ask: number
     askSize: number
 }>
+
+export type TResp_v1_order_orders_$order_id$ = {
+    'account-id': number
+    amount: string
+    'canceled-at'?: number
+    'created-at': number
+    'field-amount': string
+    'field-cash-amount': string
+    'field-fees': string
+    'finished-at'?: number
+    id: number
+    'client-order-id'?: string
+    price: string
+    state: string
+    symbol: string
+    type: string
+    'stop-price'?: string
+    operator?: string
+}

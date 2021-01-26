@@ -66,3 +66,7 @@ export const removed = <T>(oldArr: Array<T>, newArr: Array<T>) => {
     }
     return res
 }
+
+export function sleep(ms: number) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}

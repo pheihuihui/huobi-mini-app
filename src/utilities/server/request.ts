@@ -25,11 +25,10 @@ async function createRestRequestFromNode<K extends keyof TRequestMap>(reqName: K
         { url: urlPrefix + url, init: { method: reqInfo.method, body: JSON.stringify(paras.json) } } :
         { url: urlPrefix + url, init: { method: reqInfo.method } }
     let req: Promise<Response> = !(info.init && info.init.method == 'POST') ?
-        nfetch(info.url, { method: 'GET' }) :
+        nfetch(info.url, { method: 'GET', timeout: 0 }) :
         (info.init.body) ?
             nfetch(info.url, { method: 'POST', body: info.init.body, headers: { 'Content-Type': 'application/json' } }) :
             nfetch(info.url, { method: 'POST' })
-    console.log((await req).url)
     return req
 }
 

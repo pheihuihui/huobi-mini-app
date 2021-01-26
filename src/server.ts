@@ -13,6 +13,6 @@ let app = http.createServer((req, res) => {
 // proxy.start()
 
 initGlobalStatus()
-// cron_every_hour.start()
+cron_every_hour.start()
 const port = process.env.PORT || 3000
 app.listen(port)

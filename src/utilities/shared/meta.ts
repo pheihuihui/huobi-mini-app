@@ -91,6 +91,7 @@ export type TResponseMap = {
     '/v1/common/currencys': TResp_v1_common_currencys
     '/v1/order/orders/place': TResp_v1_order_orders_place
     '/market/tickers': TResp_market_tickers
+    '/v1/order/orders/{order-id}': TResp_v1_order_orders_place
 } | Record<TRequestName, never>
 
 export const requestInfoMap: Record<keyof TRequestMap, TReqInfo> = {

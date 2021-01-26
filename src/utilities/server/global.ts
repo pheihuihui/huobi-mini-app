@@ -2,6 +2,7 @@ import nWebSocket from 'ws'
 import { CUSTOMCONNSTR_cosmosstring, huobi_read_access, huobi_read_secret, huobi_trade_access, huobi_trade_secret } from './credentials'
 import { retrieveSecret } from './helper_node'
 import { retrieveHuobiResponse } from './request'
+import { retrieveHoldings } from './trader'
 
 type TGlobalServerStatus = {
     socket: nWebSocket | null
@@ -57,23 +58,17 @@ export async function initGlobalStatus() {
             cosmosConnStr: CUSTOMCONNSTR_cosmosstring
         }
     }
-
-    testConnecttion()
+    await retrieveAccountID()
+    await retrieveHoldings()
 }
 
-async function testConnecttion() {
-    while (true) {
-        let resp = await retrieveHuobiResponse('/v1/account/accounts', {})
-        let dt = resp.data
-        if (dt) {
-            console.log('ok')
-        } else {
-            console.log('error')
-        }
-        await sleep(1111)
+async function retrieveAccountID() {
+    let resp = await retrieveHuobiResponse('/v1/account/accounts', {})
+    if (resp.status == 'ok') {
+        resp.data.forEach(x => {
+            if (x.type == 'spot') {
+                globals.accountID = Number(x.id).toString()
+            }
+        })
     }
-}
-
-function sleep(ms: number) {
-    return new Promise(resolve => setTimeout(resolve, ms));
 }
