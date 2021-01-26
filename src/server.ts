@@ -1,6 +1,6 @@
 import * as http from 'http'
 import proxy from 'node-global-proxy';
-import { initGlobalStatus } from './utilities/server/global';
+import { globals, initGlobalStatus } from './utilities/server/global';
 import { cron_every_hour } from './utilities/server/schedules';
 import { localProxy } from './utilities/shared/constants';
 
@@ -14,6 +14,9 @@ let app = http.createServer((req, res) => {
 
 initGlobalStatus()
     .then(() => {
+        console.log(globals.accountID)
+        console.log(globals.holdings)
+        console.log(globals.currencys)
         cron_every_hour.start()
         const port = process.env.PORT || 3000
         app.listen(port)
