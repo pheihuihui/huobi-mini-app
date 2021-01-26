@@ -28,6 +28,7 @@ export class HuobiDataManager {
 }
 
 export async function read_allCurrencys() {
+    console.log('|||||||||||||||||||||||||||||||||||||||')
     let client = await HuobiDataManager.getMongoClient()
     let db = client.db(mongoDbName)
     let coll = db.collection<TAllCurrencys>(mongo_coll_name_all_currencys)
@@ -37,6 +38,7 @@ export async function read_allCurrencys() {
 }
 
 export async function read_currencys() {
+    console.log('|||||||||||||||||||||||||||||||||||||||')
     let client = await HuobiDataManager.getMongoClient()
     let db = client.db(mongoDbName)
     let coll = db.collection<TCurrencys>(mongo_coll_name_currencys)
