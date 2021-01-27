@@ -11,10 +11,11 @@ import { localProxy } from "./utilities/shared/constants";
 import { added, removed, sleep } from "./utilities/shared/helper";
 import { TReq_market_tickers } from "./utilities/shared/meta_request";
 
-proxy.setConfig(localProxy)
-proxy.start()
+// proxy.setConfig(localProxy)
+// proxy.start()
 
 initGlobalStatus()
     .then(() => {
-        
+        console.log(globals.currencys)
+        console.log(globals.allCurrencys)
     })

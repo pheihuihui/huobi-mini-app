@@ -17,7 +17,7 @@ export class HuobiDataManager {
         return this.client
     }
 
-    private static connectDB() {
+    private static async connectDB() {
         return new Promise(resolve => {
             MongoClient.connect(globals.secrets.cosmosConnStr, { useUnifiedTopology: true }, (err, client) => {
                 this.client = client
@@ -30,9 +30,10 @@ export class HuobiDataManager {
 export async function read_allCurrencys() {
     console.log('|||||||||||||||||||||||||||||||||||||||')
     let client = await HuobiDataManager.getMongoClient()
+    console.log(1, client.isConnected())
     let db = client.db(mongoDbName)
     let coll = db.collection<TAllCurrencys>(mongo_coll_name_all_currencys)
-    let dt = await coll.findOne({}, { sort: { ts: -1 } })
+    let dt = await coll.findOne({}, { sort: { _id: -1 } })
     globals.allCurrencys = dt?.allCurrencys ?? []
     globals.allCurrencysCount = dt?.count ?? 0
 }
@@ -40,6 +41,7 @@ export async function read_allCurrencys() {
 export async function read_currencys() {
     console.log('|||||||||||||||||||||||||||||||||||||||')
     let client = await HuobiDataManager.getMongoClient()
+    console.log(2, client.isConnected())
     let db = client.db(mongoDbName)
     let coll = db.collection<TCurrencys>(mongo_coll_name_currencys)
     let dt = await coll.findOne({}, { sort: { ts: -1 } })
