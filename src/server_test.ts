@@ -14,8 +14,8 @@ import { TReq_market_tickers } from "./utilities/shared/meta_request";
 // proxy.setConfig(localProxy)
 // proxy.start()
 
-initGlobalStatus()
-    .then(() => {
-        console.log(globals.currencys)
-        console.log(globals.allCurrencys)
-    })
+// initGlobalStatus()
+//     .then(() => {
+//         console.log(globals.currencys)
+//         console.log(globals.allCurrencys)
+//     })

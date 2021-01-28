@@ -38,10 +38,12 @@ export type TReq_v1_common_currencys = never
 
 export type TReq_v2_common_currencys = never
 
+export type TTrade = 'buy-market' | 'sell-market' | 'buy-limit' | 'sell-limit' | 'buy-ioc' | 'sell-ioc' | 'buy-limit-maker' | 'sell-limit-maker' | 'buy-stop-limit' | 'sell-stop-limit' | 'buy-limit-fok' | 'sell-limit-fok' | 'buy-stop-limit-fok' | 'sell-stop-limit-fok'
+
 export type TReq_v1_order_orders_place = {
     'account-id': string
     symbol: string
-    type: 'buy-market' | 'sell-market' | 'buy-limit' | 'sell-limit' | 'buy-ioc' | 'sell-ioc' | 'buy-limit-maker' | 'sell-limit-maker' | 'buy-stop-limit' | 'sell-stop-limit' | 'buy-limit-fok' | 'sell-limit-fok' | 'buy-stop-limit-fok' | 'sell-stop-limit-fok'
+    type: TTrade
     amount: string
     price?: string
     source?: 'spot-api' | 'margin-api' | 'super-margin-api' | 'c2c-margin-api'

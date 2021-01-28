@@ -1,4 +1,5 @@
 import { MongoClient } from 'mongodb'
+import { TTrade } from '../shared/meta_request'
 import { globals } from './global'
 import { TAllCurrencys, TCurrencys } from './meta_mongo'
 import { retrieveHuobiResponse } from './request'
@@ -7,6 +8,7 @@ const mongoDbName = 'HuobiData'
 const mongo_coll_name_currencys = 'coll_currencys'
 const mongo_coll_name_all_currencys = 'coll_all_currencys'
 const mongo_coll_logs = 'coll_logs'
+const mongo_coll_trading_logs = 'coll_trading_logs'
 
 export class HuobiDataManager {
     private static client: MongoClient
@@ -28,9 +30,7 @@ export class HuobiDataManager {
 }
 
 export async function read_allCurrencys() {
-    console.log('|||||||||||||||||||||||||||||||||||||||')
     let client = await HuobiDataManager.getMongoClient()
-    console.log(1, client.isConnected())
     let db = client.db(mongoDbName)
     let coll = db.collection<TAllCurrencys>(mongo_coll_name_all_currencys)
     let dt = await coll.findOne({}, { sort: { _id: -1 } })
@@ -39,9 +39,7 @@ export async function read_allCurrencys() {
 }
 
 export async function read_currencys() {
-    console.log('|||||||||||||||||||||||||||||||||||||||')
     let client = await HuobiDataManager.getMongoClient()
-    console.log(2, client.isConnected())
     let db = client.db(mongoDbName)
     let coll = db.collection<TCurrencys>(mongo_coll_name_currencys)
     let dt = await coll.findOne({}, { sort: { ts: -1 } })
@@ -81,5 +79,16 @@ export async function write_logs(data: string) {
     await coll.insertOne({
         ts: Date.now(),
         text: data
+    })
+}
+
+export async function write_trading_log(data: string, tradeType: TTrade) {
+    let client = await HuobiDataManager.getMongoClient()
+    let db = client.db(mongoDbName)
+    let coll = db.collection(mongo_coll_trading_logs)
+    await coll.insertOne({
+        ts: Date.now(),
+        text: data,
+        type: tradeType
     })
 }

@@ -1,6 +1,7 @@
 import { time } from "console";
 import { sleep } from "../shared/helper";
 import { globals } from "./global";
+import { write_trading_log } from "./mongo_client";
 import { retrieveHuobiResponse } from "./request";
 
 export async function allIn(coin: string, baseCoin = 'usdt') {
@@ -18,11 +19,7 @@ export async function allIn(coin: string, baseCoin = 'usdt') {
     if (resp.status == 'ok') {
         orderID = resp.data
     }
-    await sleep(1000)
-    let resp1 = await retrieveHuobiResponse('/v1/order/orders/{order-id}', { path: orderID })
-    if (resp1.status == 'ok') {
-        console.log(resp1.data)
-    }
+    await write_trading_log(resp.data, 'buy-market')
 }
 
 export async function retrieveHoldings() {
@@ -34,4 +31,10 @@ export async function retrieveHoldings() {
             }
         }
     }
+}
+
+export async function retrieveHuobiTradingDetails(orderID: string) {
+    let resp = await retrieveHuobiResponse('/v1/order/orders/{order-id}', { path: orderID })
+    console.log(resp.status)
+    console.log(resp.data)
 }
