@@ -1,6 +1,6 @@
 import { backgroundImage_dark } from "./view/themes"
-import { to64_browser } from "./utilities/client/helper_browser"
-import { createRestRequestFromBrowser } from "./utilities/client/request"
+import { to64_browser } from "./client/helper_browser"
+import { createRestRequestFromBrowser } from "./client/request"
 import { render } from "react-dom"
 import { group } from "./view/ButtonGroup"
 

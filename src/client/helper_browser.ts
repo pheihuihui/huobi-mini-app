@@ -1,4 +1,4 @@
-import { huobi_read_access, huobi_trade_access } from "../client/client_credentials"
+import { huobi_read_access, huobi_trade_access } from "./client_credentials"
 import { getCurrentDateTimeString } from "../shared/helper"
 import { TApiType } from "../shared/meta"
 import { TCommonReqFields } from "../shared/meta_request"
