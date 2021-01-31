@@ -19,7 +19,7 @@ initGlobalStatus()
         console.log(globals.holdings)
         console.log(globals.currencys)
         console.log('//////////////////////////////////////')
-        cron_every_minute.destroy()
+        cron_every_minute.start()
         cron_every_hour.start()
         const port = process.env.PORT || 3000
         app.listen(port)
