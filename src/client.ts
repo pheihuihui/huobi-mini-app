@@ -1,8 +1,8 @@
-import { backgroundImage_dark } from "./view/themes"
+import { backgroundImage_dark } from "./client/view/themes"
 import { to64_browser } from "./client/helper_browser"
 import { createRestRequestFromBrowser } from "./client/request"
 import { render } from "react-dom"
-import { group } from "./view/ButtonGroup"
+import { group } from "./client/view/ButtonGroup"
 
 let canv = document.createElement('canvas')
 canv.style.height = '100'

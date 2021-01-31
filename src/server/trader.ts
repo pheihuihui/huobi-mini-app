@@ -2,6 +2,7 @@ import { time } from "console";
 import { sleep } from "../shared/helper";
 import { globals } from "./global";
 import { write_trading_log } from "./mongo_client";
+// import { write_trading_log } from "./mongo_client";
 import { retrieveHuobiResponse } from "./request";
 
 export async function allIn(coin: string, baseCoin = 'usdt') {

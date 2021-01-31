@@ -1,7 +1,9 @@
 import nWebSocket from 'ws'
+import { TSimpleTicker } from '../shared/helper'
+import { TResp_market_tickers } from '../shared/meta_response'
 import { CUSTOMCONNSTR_cosmosstring, huobi_read_access, huobi_read_secret, huobi_trade_access, huobi_trade_secret } from './credentials'
 import { retrieveSecret } from './helper_node'
-import { HuobiDataManager, read_allCurrencys, read_currencys } from './mongo_client'
+import { HuobiDataManager, read_currencys } from './mongo_client'
 import { retrieveHuobiResponse } from './request'
 import { retrieveHoldings } from './trader'
 
@@ -13,15 +15,14 @@ type TGlobalServerStatus = {
     holdings: Record<string, number>
     currencysCount: number
     currencys: Array<string>
-    allCurrencysCount: number
-    allCurrencys: Array<string>
     secrets: {
         huobi_read_access: string
         huobi_read_secret: string
         huobi_trade_access: string
         huobi_trade_secret: string
         cosmosConnStr: string
-    }
+    },
+    previousTickers: TResp_market_tickers
 }
 
 export const globals: TGlobalServerStatus = {
@@ -32,15 +33,14 @@ export const globals: TGlobalServerStatus = {
     holdings: {},
     currencysCount: 0,
     currencys: [],
-    allCurrencysCount: 0,
-    allCurrencys: [],
     secrets: {
         huobi_read_access: '',
         huobi_read_secret: '',
         huobi_trade_access: '',
         huobi_trade_secret: '',
         cosmosConnStr: ''
-    }
+    },
+    previousTickers: []
 }
 
 export async function initGlobalStatus() {
@@ -61,7 +61,7 @@ export async function initGlobalStatus() {
     }
     await retrieveAccountID()
     await retrieveHoldings()
-    await retrieveCurrencys()
+    // await read_currencys()
 }
 
 async function retrieveAccountID() {
@@ -73,9 +73,4 @@ async function retrieveAccountID() {
             }
         })
     }
-}
-
-async function retrieveCurrencys() {
-    await read_currencys()
-    await read_allCurrencys()
 }

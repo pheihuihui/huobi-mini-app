@@ -1,5 +1,8 @@
+import { TTops } from "../server/meta_mongo"
 import { TApiType, TPeriod } from "./meta"
 import { TResp_market_tickers } from "./meta_response"
+
+export type TSimpleTicker = { symbol: string, open: number, close: number }
 
 export const parenthesesFilled = (before: string, content: string) => {
     let res = before
@@ -30,7 +33,7 @@ export const matchLast = (str1: string, str2: string) => {
     return true
 }
 
-export const topSymbols = (data: TResp_market_tickers, num: number, base?: string) => {
+export const topSymbols = (data: TSimpleTicker[], num: number, base?: string) => {
     let baseCoin = base ?? 'usdt'
     let usdttickers = data.filter(v => matchLast(v.symbol, baseCoin))
     let topten = usdttickers
@@ -46,7 +49,7 @@ export const topSymbols = (data: TResp_market_tickers, num: number, base?: strin
                 rate: x.close / x.open - 1
             }
         })
-    return topten
+    return topten as TTops
 }
 
 export const toSubscriptionStr = (symbol: string, period: TPeriod) => `market.${symbol}.kline.${period}`
@@ -69,4 +72,17 @@ export const removed = <T>(oldArr: Array<T>, newArr: Array<T>) => {
 
 export function sleep(ms: number) {
     return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+export const tickersSinceLastMinute = (last: TResp_market_tickers, cur: TResp_market_tickers, base?: string) => {
+    let baseCoin = base ?? 'usdt'
+    let res: TSimpleTicker[] = []
+    let cur_base = cur.filter(x => matchLast(x.symbol, baseCoin))
+    for (const u of cur_base) {
+        let l = last.find(x => x.symbol == u.symbol)
+        if (l) {
+            res.push({ symbol: u.symbol, open: l.close, close: u.close })
+        }
+    }
+    return res
 }

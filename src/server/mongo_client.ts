@@ -1,14 +1,10 @@
 import { MongoClient } from 'mongodb'
 import { TTrade } from '../shared/meta_request'
 import { globals } from './global'
-import { TAllCurrencys, TCurrencys } from './meta_mongo'
-import { retrieveHuobiResponse } from './request'
+import { TCurrencys, TModel, TTops } from './meta_mongo'
 
 const mongoDbName = 'HuobiData'
-const mongo_coll_name_currencys = 'coll_currencys'
-const mongo_coll_name_all_currencys = 'coll_all_currencys'
-const mongo_coll_logs = 'coll_logs'
-const mongo_coll_trading_logs = 'coll_trading_logs'
+const mongoCollName = 'HuobiColl'
 
 export class HuobiDataManager {
     private static client: MongoClient
@@ -22,6 +18,7 @@ export class HuobiDataManager {
     private static async connectDB() {
         return new Promise(resolve => {
             MongoClient.connect(globals.secrets.cosmosConnStr, { useUnifiedTopology: true }, (err, client) => {
+                console.log('connnected')
                 this.client = client
                 return resolve(client)
             })
@@ -29,45 +26,27 @@ export class HuobiDataManager {
     }
 }
 
-export async function read_allCurrencys() {
-    let client = await HuobiDataManager.getMongoClient()
-    let db = client.db(mongoDbName)
-    let coll = db.collection<TAllCurrencys>(mongo_coll_name_all_currencys)
-    let dt = await coll.findOne({}, { sort: { _id: -1 } })
-    globals.allCurrencys = dt?.allCurrencys ?? []
-    globals.allCurrencysCount = dt?.count ?? 0
-}
-
 export async function read_currencys() {
     let client = await HuobiDataManager.getMongoClient()
     let db = client.db(mongoDbName)
-    let coll = db.collection<TCurrencys>(mongo_coll_name_currencys)
-    let dt = await coll.findOne({}, { sort: { ts: -1 } })
-    globals.currencys = dt?.currencys ?? []
-    globals.currencysCount = dt?.length ?? 0
+    let coll = db.collection<TModel<'currencys'>>(mongoCollName)
+    let dt = await coll.findOne({ type: 'currencys' }, { sort: { timestamp: -1 } })
+    globals.currencys = dt?.content.all_currencys ?? []
+    globals.currencysCount = dt?.content.length ?? 0
 }
 
 export async function update_currencys(data: TCurrencys) {
     let client = await HuobiDataManager.getMongoClient()
     let db = client.db(mongoDbName)
-    let coll = db.collection<TCurrencys>(mongo_coll_name_currencys)
+    let coll = db.collection<TModel<'currencys'>>(mongoCollName)
     await coll.insertOne({
-        ts: data.ts,
-        length: data.currencys.length,
-        currencys: data.currencys,
-        added: data.added,
-        removed: data.removed
-    })
-}
-
-export async function update_allCurrencys(curs: string[]) {
-    let client = await HuobiDataManager.getMongoClient()
-    let db = client.db(mongoDbName)
-    let coll = db.collection<TAllCurrencys>(mongo_coll_name_all_currencys)
-    coll.updateOne({}, {
-        $set: {
-            count: curs.length,
-            allCurrencys: curs
+        timestamp: Date.now(),
+        type: 'currencys',
+        content: {
+            all_currencys: data.all_currencys,
+            removed_currencys: data.removed_currencys,
+            added_currencys: data.added_currencys,
+            length: data.all_currencys.length
         }
     })
 }
@@ -75,20 +54,39 @@ export async function update_allCurrencys(curs: string[]) {
 export async function write_logs(data: string) {
     let client = await HuobiDataManager.getMongoClient()
     let db = client.db(mongoDbName)
-    let coll = db.collection(mongo_coll_logs)
+    let coll = db.collection<TModel<'info'>>(mongoCollName)
     await coll.insertOne({
-        ts: Date.now(),
-        text: data
+        timestamp: Date.now(),
+        type: 'info',
+        content: {
+            text: data
+        }
     })
 }
 
 export async function write_trading_log(data: string, tradeType: TTrade) {
     let client = await HuobiDataManager.getMongoClient()
     let db = client.db(mongoDbName)
-    let coll = db.collection(mongo_coll_trading_logs)
+    let coll = db.collection<TModel<'log'>>(mongoCollName)
     await coll.insertOne({
-        ts: Date.now(),
-        text: data,
-        type: tradeType
+        timestamp: Date.now(),
+        type: 'log',
+        content: {
+            trade_type: tradeType,
+            symbol: data,
+            amount: 1,
+            price: 1
+        }
+    })
+}
+
+export async function write_tops(tops: TTops) {
+    let client = await HuobiDataManager.getMongoClient()
+    let db = client.db(mongoDbName)
+    let coll = db.collection<TModel<'tops'>>(mongoCollName)
+    await coll.insertOne({
+        timestamp: Date.now(),
+        type: 'tops',
+        content: tops
     })
 }
