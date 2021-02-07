@@ -3,12 +3,16 @@
 import proxy from "node-global-proxy";
 import { globals, initGlobalStatus } from "./server/global";
 import { TCurrencys } from "./server/meta_mongo";
-import { HuobiDataManager, read_currencys, update_currencys } from "./server/mongo_client";
+import { getTopIncreases, HuobiDataManager, read_currencys, update_currencys } from "./server/mongo_client";
+import { observer } from "./server/observer";
 import { retrieveHuobiResponse } from "./server/request";
+import { cron_every_minute } from "./server/schedules";
 import { dropCollection, initDB, initDB_currencys } from "./server/scripts";
-import { allIn, retrieveHoldings } from "./server/trader";
+import { n_hbsocket, openNodeWebSocket } from "./server/socket_node";
+import { allIn, allOut, retrieveHoldings } from "./server/trader";
 import { localProxy } from "./shared/constants";
-import { added, removed, sleep } from "./shared/helper";
+import { added, fixed8, removed, sleep, toSubscriptionStr } from "./shared/helper";
+import { ISub } from "./shared/meta";
 import { TReq_market_tickers } from "./shared/meta_request";
 
 proxy.setConfig(localProxy)
@@ -17,19 +21,9 @@ proxy.start()
 
 initGlobalStatus()
     .then(() => {
-        read_currencys()
+        openNodeWebSocket()
+        sleep(1000)
             .then(() => {
-                console.log(globals.currencys)
-                console.log(globals.currencysCount)
+                cron_every_minute.start()
             })
     })
-
-// retrieveHuobiResponse('/v1/common/currencys', {})
-//     .then(x => {
-//         let pre = {} as TCurrencys
-//         pre.added_currencys = []
-//         pre.removed_currencys = []
-//         pre.all_currencys = x.data
-//         pre.length = x.data.length
-//         update_currencys(pre)
-//     })

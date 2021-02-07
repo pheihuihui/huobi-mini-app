@@ -4,6 +4,7 @@ import {
     TReq_v1_account_accounts_$account_id$_balance,
     TReq_v1_common_currencys,
     TReq_v1_common_symbols,
+    TReq_v1_order_batch_orders,
     TReq_v1_order_orders,
     TReq_v1_order_orders_$order_id$,
     TReq_v1_order_orders_place,
@@ -15,6 +16,7 @@ import {
     TResp_v1_account_accounts_$account_id$_balance,
     TResp_v1_common_currencys,
     TResp_v1_common_symbols,
+    TResp_v1_order_batch_orders,
     TResp_v1_order_orders,
     TResp_v1_order_orders_place,
     TResp_v2_account_asset_valuation
@@ -63,7 +65,8 @@ export const requestNames = [
     '/v1/account/accounts/{account-id}/balance',
     '/v1/common/currencys',
     '/market/tickers',
-    '/v1/order/orders/place'
+    '/v1/order/orders/place',
+    '/v1/order/batch-orders'
 ] as const
 
 export type TRequestName = (typeof requestNames)[number]
@@ -80,6 +83,7 @@ export type TRequestMap = {
     '/v1/common/currencys': TReq_v1_common_currencys
     '/v1/order/orders/place': TReq_v1_order_orders_place
     '/market/tickers': TReq_market_tickers
+    '/v1/order/batch-orders': TReq_v1_order_batch_orders
 } | Record<TRequestName, never>
 
 export type TResponseMap = {
@@ -92,6 +96,7 @@ export type TResponseMap = {
     '/v1/order/orders/place': TResp_v1_order_orders_place
     '/market/tickers': TResp_market_tickers
     '/v1/order/orders/{order-id}': TResp_v1_order_orders_place
+    '/v1/order/batch-orders': TResp_v1_order_batch_orders
 } | Record<TRequestName, never>
 
 export const requestInfoMap: Record<keyof TRequestMap, TReqInfo> = {
@@ -103,5 +108,6 @@ export const requestInfoMap: Record<keyof TRequestMap, TReqInfo> = {
     '/v1/account/accounts/{account-id}/balance': { needAuth: true, paras: 'path', method: 'GET', version: 'v1' },
     '/v1/common/currencys': { needAuth: false, paras: 'none', method: 'GET', version: 'v1' },
     '/v1/order/orders/place': { needAuth: true, paras: 'json', method: 'POST', version: 'v1' },
-    '/market/tickers': { needAuth: false, paras: 'none', method: 'GET', version: 'none' }
+    '/market/tickers': { needAuth: false, paras: 'none', method: 'GET', version: 'none' },
+    '/v1/order/batch-orders': { needAuth: true, paras: 'none', method: 'POST', version: 'v1' }
 }

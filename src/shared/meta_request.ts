@@ -52,6 +52,8 @@ export type TReq_v1_order_orders_place = {
     operator?: 'gte' | 'lte'
 }
 
+export type TReq_v1_order_batch_orders = Array<TReq_v1_order_orders_place>
+
 export type TReq_market_tickers = never
 
 export type TGetResp<T> = any

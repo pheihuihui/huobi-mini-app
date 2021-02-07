@@ -9,7 +9,6 @@ import { retrieveHoldings } from './trader'
 
 type TGlobalServerStatus = {
     socket: nWebSocket | null
-    top10: Array<string>
     state: 'locked' | 'free'
     accountID: string
     holdings: Record<string, number>
@@ -21,13 +20,11 @@ type TGlobalServerStatus = {
         huobi_trade_access: string
         huobi_trade_secret: string
         cosmosConnStr: string
-    },
-    previousTickers: TResp_market_tickers
+    }
 }
 
 export const globals: TGlobalServerStatus = {
     socket: null,
-    top10: [],
     state: 'free',
     accountID: '',
     holdings: {},
@@ -39,8 +36,7 @@ export const globals: TGlobalServerStatus = {
         huobi_trade_access: '',
         huobi_trade_secret: '',
         cosmosConnStr: ''
-    },
-    previousTickers: []
+    }
 }
 
 export async function initGlobalStatus() {
@@ -61,7 +57,7 @@ export async function initGlobalStatus() {
     }
     await retrieveAccountID()
     await retrieveHoldings()
-    // await read_currencys()
+    await read_currencys()
 }
 
 async function retrieveAccountID() {

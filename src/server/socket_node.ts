@@ -4,30 +4,13 @@ import nWebSocket from 'ws'
 import { gunzip } from 'zlib'
 import { TPromiseRespV1, TResp_market_tickers } from "../shared/meta_response"
 import { added, removed, topSymbols, toSubscriptionStr } from "../shared/helper"
-import { MarketObserver } from "./observer"
+import { MarketObserver, observer } from "./observer"
 import { TTick } from "../shared/meta_socket"
 
 export let n_hbsocket: nWebSocket
 
-const observer = MarketObserver.getInstance()
-
 export function openNodeWebSocket() {
     n_hbsocket = new nWebSocket(huobiwss)
-
-    n_hbsocket.onopen = () => {
-        // cron.start()
-        observer.attachStrategyOnRise((symbol, price, time) => {
-            console.log(`rising...\n\t${symbol}\n\t${price}\n\t${time}\n`)
-        })
-        observer.attachStrategyOnFall((symbol, price, time) => {
-            console.log(`falling...\n\t${symbol}\n\t${price}\n\t${time}\n`)
-        })
-    }
-
-    n_hbsocket.onclose = () => {
-        // cron.stop()
-        observer.removeAllStrategies()
-    }
 
     n_hbsocket.onmessage = async (event) => {
         let dt = event.data as ArrayBuffer

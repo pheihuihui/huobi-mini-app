@@ -1,5 +1,5 @@
 import { TTops } from "../server/meta_mongo"
-import { TApiType, TPeriod } from "./meta"
+import { TPeriod } from "./meta"
 import { TResp_market_tickers } from "./meta_response"
 
 export type TSimpleTicker = { symbol: string, open: number, close: number }
@@ -33,10 +33,10 @@ export const matchLast = (str1: string, str2: string) => {
     return true
 }
 
-export const topSymbols = (data: TSimpleTicker[], num: number, base?: string) => {
+export const topSymbols: (data: TSimpleTicker[], num: number, base?: string) => TTops = (data, num, base?) => {
     let baseCoin = base ?? 'usdt'
     let usdttickers = data.filter(v => matchLast(v.symbol, baseCoin))
-    let topten = usdttickers
+    let topten: TTops = usdttickers
         .sort((a, b) => {
             let aa = a.close / a.open - 1
             let bb = b.close / b.open - 1
@@ -44,12 +44,23 @@ export const topSymbols = (data: TSimpleTicker[], num: number, base?: string) =>
         })
         .filter((v, i) => i < num)
         .map(x => {
-            return {
-                symbol: x.symbol,
-                rate: x.close / x.open - 1
+            let rt = x.close / x.open - 1
+            if (rt > 0.01) {
+                return {
+                    symbol: x.symbol,
+                    rate: rt,
+                    sharp: true,
+                    fluctuation: {}
+                }
+            } else {
+                return {
+                    symbol: x.symbol,
+                    rate: rt,
+                    sharp: false,
+                }
             }
         })
-    return topten as TTops
+    return topten
 }
 
 export const toSubscriptionStr = (symbol: string, period: TPeriod) => `market.${symbol}.kline.${period}`
@@ -85,4 +96,8 @@ export const tickersSinceLastMinute = (last: TResp_market_tickers, cur: TResp_ma
         }
     }
     return res
+}
+
+export const fixed8 = (num: number) => {
+    return Number(Number(num).toFixed(8))
 }

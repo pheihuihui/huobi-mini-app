@@ -18,10 +18,14 @@ export type TInfo = {
     text: string
 }
 
-export type TTops = Array<{
+export type TIncrease = {
     symbol: string
     rate: number
-}>
+    sharp: boolean
+    fluctuation?: Record<number, number>
+}
+
+export type TTops = Array<TIncrease>
 
 export interface IModels {
     currencys: TCurrencys

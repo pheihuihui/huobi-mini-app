@@ -19,7 +19,10 @@ export type TResp_v1_common_symbols = {
     'base-currency': string
     'quote-currency': string
     'api-trading': boolean
+    "price-precision": number
+    "amount-precision": number
     symbol: string
+    state: 'online' | 'offline' | 'suspend' | 'pre-online'
 }
 
 export type TResp_v1_account_accounts = Array<{
@@ -50,6 +53,13 @@ export type TResp_v1_common_currencys = Array<string>
 export type TResp_v2_common_currencys = Array<string>
 
 export type TResp_v1_order_orders_place = string
+
+export type TResp_v1_order_batch_orders = Array<{
+    'order-id': number
+    'client-order-id': string
+    'err-code'?: string
+    'err-msg'?: string
+}>
 
 export type TResp_market_tickers = Array<{
     open: number

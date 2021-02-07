@@ -7,6 +7,7 @@ export class MarketObserver {
 
     private onRise: EventEmitter
     private onFall: EventEmitter
+    private onWatching: EventEmitter
 
     private prices: Record<string, PriceQueue>
 
@@ -17,6 +18,7 @@ export class MarketObserver {
     private constructor() {
         this.onRise = new EventEmitter()
         this.onFall = new EventEmitter()
+        this.onWatching = new EventEmitter()
         this.prices = {}
         this.timeGap = 10 * 1000
         this.growthRate = 0.005 / 1000
@@ -31,41 +33,34 @@ export class MarketObserver {
     }
 
     update(time: number, symbol: string, tick: TTick) {
-        for (const key in this.prices) {
-            if (Object.prototype.hasOwnProperty.call(this.prices, key)) {
-                const element = this.prices[key]
-                let last = element.getLastUpdateTime()
-                if (time - last > this.timeGap && symbol != key) {
-                    delete this.prices[key]
-                }
-            }
-        }
-        if (this.prices[symbol]) {
-            this.prices[symbol].push(time, tick.close)
-        } else {
-            let queue = new PriceQueue(5, this.growthRate, this.reductionRate)
-            queue.push(time, tick.close)
-            this.prices[symbol] = queue
-        }
-        for (const key in this.prices) {
-            if (Object.prototype.hasOwnProperty.call(this.prices, key)) {
-                const element = this.prices[key]
-                if (element.getState() == 'rising') {
-                    this.onRise.emit('buy', key, tick.close, time)
-                }
-                if (element.getState() == 'falling') {
-                    this.onFall.emit('sell', key, tick.close, time)
-                }
-            }
-        }
-
-        // let logs: Record<string, number> = {}
         // for (const key in this.prices) {
         //     if (Object.prototype.hasOwnProperty.call(this.prices, key)) {
-        //         const element = this.prices[key];
-        //         logs[key] = element.getCurrentLength()
+        //         const element = this.prices[key]
+        //         let last = element.getLastUpdateTime()
+        //         if (time - last > this.timeGap && symbol != key) {
+        //             delete this.prices[key]
+        //         }
         //     }
         // }
+        // if (this.prices[symbol]) {
+        //     this.prices[symbol].push(time, tick.close)
+        // } else {
+        //     let queue = new PriceQueue(5, this.growthRate, this.reductionRate)
+        //     queue.push(time, tick.close)
+        //     this.prices[symbol] = queue
+        // }
+        // for (const key in this.prices) {
+        //     if (Object.prototype.hasOwnProperty.call(this.prices, key)) {
+        //         const element = this.prices[key]
+        //         if (element.getState() == 'rising') {
+        //             this.onRise.emit('buy', key, tick.close, time)
+        //         }
+        //         if (element.getState() == 'falling') {
+        //             this.onFall.emit('sell', key, tick.close, time)
+        //         }
+        //     }
+        // }
+        this.onWatching.emit('watch', symbol, tick.close, time)
     }
 
     attachStrategyOnRise(strategy: (symbol: string, price: number, time: number) => void) {
@@ -76,9 +71,19 @@ export class MarketObserver {
         this.onFall.addListener('sell', strategy)
     }
 
+    attachStrategyOnWatching(strategy: (symbol: string, price: number, time: number) => void) {
+        this.onWatching.addListener('watch', strategy)
+    }
+
+    removeStrategiesOnWatching() {
+        this.onWatching.removeAllListeners()
+    }
+
     removeAllStrategies() {
         this.onRise.removeAllListeners()
         this.onRise.removeAllListeners()
     }
 
 }
+
+export const observer = MarketObserver.getInstance()

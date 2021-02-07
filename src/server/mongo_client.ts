@@ -1,7 +1,7 @@
-import { MongoClient } from 'mongodb'
+import { Cursor, FilterQuery, MongoClient } from 'mongodb'
 import { TTrade } from '../shared/meta_request'
 import { globals } from './global'
-import { TCurrencys, TModel, TTops } from './meta_mongo'
+import { TCurrencys, TModel, TModelName, TTops } from './meta_mongo'
 
 const mongoDbName = 'HuobiData'
 const mongoCollName = 'HuobiColl'
@@ -24,6 +24,13 @@ export class HuobiDataManager {
             })
         })
     }
+}
+
+async function getCollection<T extends TModelName>(name: T) {
+    let client = await HuobiDataManager.getMongoClient()
+    let db = client.db(mongoDbName)
+    let coll = db.collection<TModel<T>>(mongoCollName)
+    return coll
 }
 
 export async function read_currencys() {
@@ -89,4 +96,44 @@ export async function write_tops(tops: TTops) {
         type: 'tops',
         content: tops
     })
+}
+
+export async function getTopIncreases(symbol?: string) {
+    let coll = await getCollection('tops')
+    let highs: Array<{ time: string, symbol: string, rate: number }> = []
+    let curs: Cursor<TModel<"tops">>
+    if (symbol) {
+        curs = coll.find({
+            type: 'tops',
+            content: {
+                $elemMatch: {
+                    symbol: symbol,
+                }
+            }
+        })
+    } else {
+        curs = coll.find({
+            type: 'tops',
+            content: {
+                $elemMatch: {
+                    rate: {
+                        $gt: 0.05
+                    }
+                }
+            }
+        })
+    }
+    await curs.forEach(v => {
+        let arr = v.content
+        arr.forEach(w => {
+            highs.push({
+                time: new Date(v.timestamp).toString(),
+                symbol: w.symbol,
+                rate: w.rate
+            })
+        })
+    })
+    return highs.sort((a, b) => {
+        return b.rate - a.rate
+    }).filter((v, i) => i < 30)
 }
