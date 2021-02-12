@@ -1,7 +1,7 @@
 import { Cursor, FilterQuery, MongoClient } from 'mongodb'
 import { TTrade } from '../shared/meta_request'
 import { globals } from './global'
-import { TCurrencys, TModel, TModelName, TTops } from './meta_mongo'
+import { TCurrencys, TIncrease, TModel, TModelName, TTops } from './meta_mongo'
 
 const mongoDbName = 'HuobiData'
 const mongoCollName = 'HuobiColl'
@@ -11,18 +11,10 @@ export class HuobiDataManager {
 
     static async getMongoClient() {
         if (HuobiDataManager.client && HuobiDataManager.client.isConnected()) return this.client
-        await this.connectDB()
+        // await this.connectDB()
+        let cli = await MongoClient.connect(globals.secrets.cosmosConnStr, { useUnifiedTopology: true })
+        this.client = cli
         return this.client
-    }
-
-    private static async connectDB() {
-        return new Promise(resolve => {
-            MongoClient.connect(globals.secrets.cosmosConnStr, { useUnifiedTopology: true }, (err, client) => {
-                console.log('connnected')
-                this.client = client
-                return resolve(client)
-            })
-        })
     }
 }
 
@@ -95,6 +87,17 @@ export async function write_tops(tops: TTops) {
         timestamp: Date.now(),
         type: 'tops',
         content: tops
+    })
+}
+
+export async function write_top1(top: TIncrease) {
+    let client = await HuobiDataManager.getMongoClient()
+    let db = client.db(mongoDbName)
+    let coll = db.collection<TModel<'top1'>>(mongoCollName)
+    await coll.insertOne({
+        timestamp: Date.now(),
+        type: 'top1',
+        content: top
     })
 }
 

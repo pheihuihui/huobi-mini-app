@@ -1,5 +1,5 @@
 import ncron from 'node-cron'
-import { topSymbols, toSubscriptionStr, added, removed, sleep, tickersSinceLastMinute } from '../shared/helper'
+import { topSymbols, toSubscriptionStr, added, removed, sleep, tickersSinceLastTime } from '../shared/helper'
 import { ISub, IUnsub } from '../shared/meta'
 import { globals } from './global'
 import { update_currencys, write_logs, write_tops } from './mongo_client'
@@ -8,11 +8,11 @@ import { retrieveHuobiResponse } from './request'
 import { n_hbsocket } from './socket_node'
 import { allIn } from './trader'
 
-export const cron_every_minute = ncron.schedule('59 * * * * *', async () => {
+const every_minute = async () => {
     let resp1 = await retrieveHuobiResponse('/market/tickers', {})
     await sleep(1000)
     let resp2 = await retrieveHuobiResponse('/market/tickers', {})
-    let tickers = tickersSinceLastMinute(resp1.data, resp2.data)
+    let tickers = tickersSinceLastTime(resp1.data, resp2.data)
     let top1 = topSymbols(tickers, 1)[0]
     console.log(top1)
     let sub = toSubscriptionStr(top1.symbol, '1min')
@@ -35,28 +35,16 @@ export const cron_every_minute = ncron.schedule('59 * * * * *', async () => {
             n_hbsocket.send(JSON.stringify(unSubReq))
             observer.removeStrategiesOnWatching()
             console.log(top1)
-        }, 10000);
+        }, 20000);
     }
+}
 
-
-    // let addedSubs = added(globals.top10, subs)
-    // let removedSubs = removed(globals.top10, subs)
-    // globals.top10 = subs
-    // addedSubs.forEach(v => {
-    //     let req: ISub = {
-    //         sub: v,
-    //         id: 'myid'
-    //     }
-    //     n_hbsocket.send(JSON.stringify(req))
-    // })
-    // removedSubs.forEach(v => {
-    //     let req: IUnsub = {
-    //         unsub: v,
-    //         id: 'myid'
-    //     }
-    //     n_hbsocket.send(JSON.stringify(req))
-    // })
-
+export const cron_every_minute_59 = ncron.schedule('59 * * * * *', every_minute)
+export const cron_every_minute_19 = ncron.schedule('19 * * * * *', every_minute)
+export const cron_every_minute_39 = ncron.schedule('39 * * * * *', every_minute)
+export const cron_every_10sec = ncron.schedule('*/10 * * * * *', () => {
+    console.log('run')
+    observer.updateAll()
 })
 
 export const cron_every_hour = ncron.schedule('0 0 * * * *', () => {

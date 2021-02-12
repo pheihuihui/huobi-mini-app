@@ -1,6 +1,12 @@
 import { EventEmitter } from "events";
+import { tickersSinceLastTime, topSymbols, toSubscriptionStr } from "../shared/helper";
+import { ISub, IUnsub } from "../shared/meta";
+import { TResp_market_tickers } from "../shared/meta_response";
 import { TTick } from "../shared/meta_socket";
 import { PriceQueue } from "../shared/price_queue";
+import { write_top1 } from "./mongo_client";
+import { retrieveHuobiResponse } from "./request";
+import { n_hbsocket } from "./socket_node";
 
 export class MarketObserver {
     private static observer: MarketObserver
@@ -9,20 +15,21 @@ export class MarketObserver {
     private onFall: EventEmitter
     private onWatching: EventEmitter
 
-    private prices: Record<string, PriceQueue>
+    private lastTick: TResp_market_tickers
+    private lastTickTime: number
+    private tickTimeGap: number
 
-    private timeGap: number
-    private growthRate: number
-    private reductionRate: number
-
-    private constructor() {
+    private constructor(gap?: number) {
         this.onRise = new EventEmitter()
         this.onFall = new EventEmitter()
         this.onWatching = new EventEmitter()
-        this.prices = {}
-        this.timeGap = 10 * 1000
-        this.growthRate = 0.005 / 1000
-        this.reductionRate = 0
+        this.lastTick = []
+        this.lastTickTime = 0
+        if (gap) {
+            this.tickTimeGap = gap
+        } else {
+            this.tickTimeGap = 10000
+        }
     }
 
     static getInstance() {
@@ -61,6 +68,46 @@ export class MarketObserver {
         //     }
         // }
         this.onWatching.emit('watch', symbol, tick.close, time)
+    }
+
+    async updateAll() {
+        let resp = await retrieveHuobiResponse('/market/tickers', {})
+        let ts = Date.now()
+        let dt = resp.data
+        let shortticker = tickersSinceLastTime(this.lastTick, dt)
+        let tops = topSymbols(shortticker, 1)
+        if (tops.length == 1) {
+            let top1 = tops[0]
+            let rt = top1.rate / (ts - this.lastTickTime)
+            top1.rate = rt
+            if (rt > 0.02) {
+                top1.sharp = true
+                let sub = toSubscriptionStr(top1.symbol, '1min')
+                if (top1.sharp) {
+                    let subReq: ISub = {
+                        sub: sub,
+                        id: 'myid'
+                    }
+                    let unSubReq: IUnsub = {
+                        unsub: sub,
+                        id: 'myid'
+                    }
+                    n_hbsocket.send(JSON.stringify(subReq))
+                    this.attachStrategyOnWatching((symbol, price, time) => {
+                        if (symbol == top1.symbol) {
+                            top1.fluctuation![time] = price
+                        }
+                    })
+                    setTimeout(() => {
+                        n_hbsocket.send(JSON.stringify(unSubReq))
+                        this.removeStrategiesOnWatching()
+                        write_top1(top1)
+                    }, this.tickTimeGap);
+                }
+            }
+            this.lastTick = dt
+            this.lastTickTime = ts
+        }
     }
 
     attachStrategyOnRise(strategy: (symbol: string, price: number, time: number) => void) {

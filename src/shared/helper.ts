@@ -85,7 +85,7 @@ export function sleep(ms: number) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-export const tickersSinceLastMinute = (last: TResp_market_tickers, cur: TResp_market_tickers, base?: string) => {
+export const tickersSinceLastTime = (last: TResp_market_tickers, cur: TResp_market_tickers, base?: string) => {
     let baseCoin = base ?? 'usdt'
     let res: TSimpleTicker[] = []
     let cur_base = cur.filter(x => matchLast(x.symbol, baseCoin))

@@ -32,6 +32,7 @@ export interface IModels {
     log: TTradingLog
     info: TInfo
     tops: TTops
+    top1: TIncrease
 }
 
 export type TModelName = keyof IModels

@@ -6,7 +6,7 @@ import { TCurrencys } from "./server/meta_mongo";
 import { getTopIncreases, HuobiDataManager, read_currencys, update_currencys } from "./server/mongo_client";
 import { observer } from "./server/observer";
 import { retrieveHuobiResponse } from "./server/request";
-import { cron_every_minute } from "./server/schedules";
+import { cron_every_10sec, cron_every_minute_19, cron_every_minute_39, cron_every_minute_59 } from "./server/schedules";
 import { dropCollection, initDB, initDB_currencys } from "./server/scripts";
 import { n_hbsocket, openNodeWebSocket } from "./server/socket_node";
 import { allIn, allOut, retrieveHoldings } from "./server/trader";
@@ -15,8 +15,8 @@ import { added, fixed8, removed, sleep, toSubscriptionStr } from "./shared/helpe
 import { ISub } from "./shared/meta";
 import { TReq_market_tickers } from "./shared/meta_request";
 
-proxy.setConfig(localProxy)
-proxy.start()
+// proxy.setConfig(localProxy)
+// proxy.start()
 
 
 initGlobalStatus()
@@ -24,6 +24,6 @@ initGlobalStatus()
         openNodeWebSocket()
         sleep(1000)
             .then(() => {
-                cron_every_minute.start()
+                cron_every_10sec.start()
             })
     })
