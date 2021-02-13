@@ -25,6 +25,6 @@ initGlobalStatus()
         sleep(1000)
             .then(() => {
                 getTopIncreases()
-                    .then(x => console.log(x))
+                    .then(x => console.log(x.length))
             })
     })

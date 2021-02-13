@@ -1,5 +1,5 @@
 import { initGlobalStatus } from './server/global';
-import { cron_every_hour, cron_every_minute } from './server/schedules';
+import { cron_every_hour } from './server/schedules';
 import express from 'express'
 import proxy from 'node-global-proxy';
 import { localProxy } from './shared/constants';
