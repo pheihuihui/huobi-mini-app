@@ -24,6 +24,7 @@ initGlobalStatus()
         openNodeWebSocket()
         sleep(1000)
             .then(() => {
-                cron_every_10sec.start()
+                getTopIncreases()
+                    .then(x => console.log(x))
             })
     })

@@ -78,7 +78,7 @@ export class MarketObserver {
         let tops = topSymbols(shortticker, 1)
         if (tops.length == 1) {
             let top1 = tops[0]
-            let rt = top1.rate / (ts - this.lastTickTime)
+            let rt = top1.rate / (ts - this.lastTickTime) * 1000
             top1.rate = rt
             if (rt > 0.02) {
                 top1.sharp = true

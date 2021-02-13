@@ -102,38 +102,19 @@ export async function write_top1(top: TIncrease) {
 }
 
 export async function getTopIncreases(symbol?: string) {
-    let coll = await getCollection('tops')
+    let coll = await getCollection('top1')
     let highs: Array<{ time: string, symbol: string, rate: number }> = []
-    let curs: Cursor<TModel<"tops">>
-    if (symbol) {
-        curs = coll.find({
-            type: 'tops',
-            content: {
-                $elemMatch: {
-                    symbol: symbol,
-                }
-            }
-        })
-    } else {
-        curs = coll.find({
-            type: 'tops',
-            content: {
-                $elemMatch: {
-                    rate: {
-                        $gt: 0.05
-                    }
-                }
-            }
-        })
-    }
+    let curs: Cursor<TModel<'top1'>>
+
+    curs = coll.find({
+        type: 'top1'
+    })
+
     await curs.forEach(v => {
-        let arr = v.content
-        arr.forEach(w => {
-            highs.push({
-                time: new Date(v.timestamp).toString(),
-                symbol: w.symbol,
-                rate: w.rate
-            })
+        highs.push({
+            time: new Date(v.timestamp).toString(),
+            symbol: v.content.symbol,
+            rate: v.content.rate
         })
     })
     return highs.sort((a, b) => {
