@@ -90,7 +90,7 @@ export async function write_tops(tops: TTops) {
     })
 }
 
-export async function write_top1(top: TIncrease) {
+export async function write_top1_async(top: TIncrease) {
     let client = await HuobiDataManager.getMongoClient()
     let db = client.db(mongoDbName)
     let coll = db.collection<TModel<'top1'>>(mongoCollName)
@@ -99,6 +99,21 @@ export async function write_top1(top: TIncrease) {
         type: 'top1',
         content: top
     })
+}
+
+export function write_top1(top: TIncrease) {
+    let client = HuobiDataManager.getMongoClient()
+        .then(client => {
+            let db = client.db(mongoDbName)
+            let coll = db.collection<TModel<'top1'>>(mongoCollName)
+            coll.insertOne({
+                timestamp: Date.now(),
+                type: 'top1',
+                content: top
+            }).then(res => {
+                console.log(res.result)
+            })
+        })
 }
 
 export async function getTopIncreases(symbol?: string) {

@@ -3,7 +3,7 @@ import { tickersSinceLastTime, topSymbols, toSubscriptionStr } from "../shared/h
 import { ISub, IUnsub } from "../shared/meta";
 import { TResp_market_tickers } from "../shared/meta_response";
 import { TTick } from "../shared/meta_socket";
-import { write_top1 } from "./mongo_client";
+import { write_top1, write_top1_async } from "./mongo_client";
 import { retrieveHuobiResponse } from "./request";
 import { n_hbsocket } from "./socket_node";
 
