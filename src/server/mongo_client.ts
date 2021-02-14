@@ -104,9 +104,7 @@ export async function write_top1(top: TIncrease) {
 export async function getTopIncreases(symbol?: string) {
     let coll = await getCollection('top1')
     let highs: Array<{ time: string, symbol: string, rate: number }> = []
-    let curs: Cursor<TModel<'top1'>>
-
-    curs = coll.find({
+    let curs: Cursor<TModel<'top1'>> = coll.find({
         type: 'top1'
     })
 

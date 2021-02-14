@@ -14,7 +14,6 @@ const every_minute = async () => {
     let resp2 = await retrieveHuobiResponse('/market/tickers', {})
     let tickers = tickersSinceLastTime(resp1.data, resp2.data)
     let top1 = topSymbols(tickers, 1)[0]
-    console.log(top1)
     let sub = toSubscriptionStr(top1.symbol, '1min')
     if (top1.sharp) {
         let subReq: ISub = {
