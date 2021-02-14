@@ -43,7 +43,7 @@ export const cron_every_minute_59 = ncron.schedule('59 * * * * *', every_minute)
 export const cron_every_minute_19 = ncron.schedule('19 * * * * *', every_minute)
 export const cron_every_minute_39 = ncron.schedule('39 * * * * *', every_minute)
 export const cron_every_10sec = ncron.schedule('*/10 * * * * *', () => {
-    console.log('run')
+    console.log('update all...')
     observer.updateAll()
 })
 

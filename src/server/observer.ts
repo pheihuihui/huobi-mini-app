@@ -3,7 +3,6 @@ import { tickersSinceLastTime, topSymbols, toSubscriptionStr } from "../shared/h
 import { ISub, IUnsub } from "../shared/meta";
 import { TResp_market_tickers } from "../shared/meta_response";
 import { TTick } from "../shared/meta_socket";
-import { PriceQueue } from "../shared/price_queue";
 import { write_top1 } from "./mongo_client";
 import { retrieveHuobiResponse } from "./request";
 import { n_hbsocket } from "./socket_node";
@@ -104,6 +103,9 @@ export class MarketObserver {
                         write_top1(top1)
                     }, this.tickTimeGap);
                 }
+            } else {
+                top1.sharp = false
+                write_top1(top1)
             }
             this.lastTick = dt
             this.lastTickTime = ts
