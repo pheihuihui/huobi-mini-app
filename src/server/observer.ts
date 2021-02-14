@@ -79,7 +79,7 @@ export class MarketObserver {
             let top1 = tops[0]
             let rt = top1.rate / (ts - this.lastTickTime) * 1000
             top1.rate = rt
-            if (rt > 0.02) {
+            if (top1.rate > 0.02) {
                 top1.sharp = true
                 let sub = toSubscriptionStr(top1.symbol, '1min')
                 if (top1.sharp) {

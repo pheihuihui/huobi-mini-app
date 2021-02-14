@@ -102,7 +102,7 @@ export async function write_top1_async(top: TIncrease) {
 }
 
 export function write_top1(top: TIncrease) {
-    let client = HuobiDataManager.getMongoClient()
+    HuobiDataManager.getMongoClient()
         .then(client => {
             let db = client.db(mongoDbName)
             let coll = db.collection<TModel<'top1'>>(mongoCollName)
