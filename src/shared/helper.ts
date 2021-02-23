@@ -45,19 +45,10 @@ export const topSymbols: (data: TSimpleTicker[], num: number, base?: string) => 
         .filter((v, i) => i < num)
         .map(x => {
             let rt = x.close / x.open - 1
-            if (rt > 0.01) {
-                return {
-                    symbol: x.symbol,
-                    rate: rt,
-                    sharp: true,
-                    fluctuation: {}
-                }
-            } else {
-                return {
-                    symbol: x.symbol,
-                    rate: rt,
-                    sharp: false,
-                }
+            return {
+                symbol: x.symbol,
+                rate: rt,
+                sharp: false
             }
         })
     return topten

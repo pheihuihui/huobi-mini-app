@@ -4,7 +4,7 @@ import nWebSocket from 'ws'
 import { gunzip } from 'zlib'
 import { TPromiseRespV1, TResp_market_tickers } from "../shared/meta_response"
 import { added, removed, topSymbols, toSubscriptionStr } from "../shared/helper"
-import { MarketObserver, observer } from "./observer"
+import { observer } from "./observer"
 import { TTick } from "../shared/meta_socket"
 
 export let n_hbsocket: nWebSocket

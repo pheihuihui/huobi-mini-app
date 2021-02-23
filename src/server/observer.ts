@@ -7,7 +7,7 @@ import { write_top1, write_top1_async } from "./mongo_client";
 import { retrieveHuobiResponse } from "./request";
 import { n_hbsocket } from "./socket_node";
 
-export class MarketObserver {
+class MarketObserver {
     private static observer: MarketObserver
 
     private onRise: EventEmitter
@@ -78,9 +78,12 @@ export class MarketObserver {
         if (tops.length == 1) {
             let top1 = tops[0]
             let rt = top1.rate / (ts - this.lastTickTime) * 1000
+            console.log(top1.rate)
+            console.log(`rt: ${rt}`)
             top1.rate = rt
             if (top1.rate > 0.02) {
                 top1.sharp = true
+                top1.fluctuation = {}
                 let sub = toSubscriptionStr(top1.symbol, '1min')
                 if (top1.sharp) {
                     let subReq: ISub = {
@@ -104,12 +107,11 @@ export class MarketObserver {
                     }, this.tickTimeGap);
                 }
             } else {
-                top1.sharp = false
                 write_top1(top1)
             }
-            this.lastTick = dt
-            this.lastTickTime = ts
         }
+        this.lastTick = dt
+        this.lastTickTime = ts
     }
 
     attachStrategyOnRise(strategy: (symbol: string, price: number, time: number) => void) {
