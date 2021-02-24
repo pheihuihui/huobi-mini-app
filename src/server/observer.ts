@@ -81,7 +81,7 @@ class MarketObserver {
             console.log(top1.rate)
             console.log(`rt: ${rt}`)
             top1.rate = rt
-            if (top1.rate > 0.02) {
+            if (top1.rate > 0.015) {
                 top1.sharp = true
                 top1.fluctuation = {}
                 let sub = toSubscriptionStr(top1.symbol, '1min')

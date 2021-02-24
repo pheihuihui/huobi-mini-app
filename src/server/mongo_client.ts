@@ -118,19 +118,21 @@ export function write_top1(top: TIncrease) {
 
 export async function getTopIncreases(symbol?: string) {
     let coll = await getCollection('top1')
-    let highs: Array<{ time: string, symbol: string, rate: number }> = []
     let curs: Cursor<TModel<'top1'>> = coll.find({
-        type: 'top1'
-    })
+        type: 'top1',
+        'content.sharp': true
+    }).limit(10)
 
-    await curs.forEach(v => {
-        highs.push({
-            time: new Date(v.timestamp).toString(),
-            symbol: v.content.symbol,
-            rate: v.content.rate
-        })
+    curs.forEach(v => {
+        console.log(v)
     })
-    return highs.sort((a, b) => {
-        return b.rate - a.rate
-    }).filter((v, i) => i < 30)
+}
+
+export async function countTop1s() {
+    let coll = await getCollection('top1')
+    let curs: Cursor<TModel<'top1'>> = coll.find({
+        type: 'top1',
+        'content.sharp': false
+    })
+    return await curs.count()
 }
