@@ -48,12 +48,12 @@ export const cron_checkSocket = ncron.schedule('0 * * * * *', () => {
     } else {
         openNodeWebSocket()
     }
-})
+}, { scheduled: false })
 
 export const cron_every_10sec = ncron.schedule('*/10 * * * * *', () => {
     console.log('update all...')
     observer.updateAll()
-})
+}, { scheduled: false })
 
 export const cron_every_hour = ncron.schedule('0 0 * * * *', () => {
     retrieveHuobiResponse('/v1/common/currencys', {})
@@ -86,4 +86,4 @@ export const cron_every_hour = ncron.schedule('0 0 * * * *', () => {
                 write_logs('no currencies udpate')
             }
         })
-})
+}, { scheduled: false })

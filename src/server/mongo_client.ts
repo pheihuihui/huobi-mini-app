@@ -116,23 +116,25 @@ export function write_top1(top: TIncrease) {
         })
 }
 
-export async function getTopIncreases(symbol?: string) {
+export async function getTopIncreases() {
     let coll = await getCollection('top1')
     let curs: Cursor<TModel<'top1'>> = coll.find({
         type: 'top1',
         'content.sharp': true
-    }).limit(10)
+    }).sort({ 'content.rate': 1 })
 
-    curs.forEach(v => {
-        console.log(v)
+    let res = [] as TModel<'top1'>[]
+    await curs.forEach(v => {
+        res.push(v)
     })
+    return res
 }
 
 export async function countTop1s() {
     let coll = await getCollection('top1')
     let curs: Cursor<TModel<'top1'>> = coll.find({
         type: 'top1',
-        'content.sharp': false
+        'content.sharp': true
     })
     return await curs.count()
 }

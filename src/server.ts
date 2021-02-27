@@ -4,11 +4,19 @@ import express from 'express'
 import proxy from 'node-global-proxy';
 import { localProxy } from './shared/constants';
 import { openNodeWebSocket } from './server/socket_node';
+import { m_authentication, m_log } from './server/middle';
+import { query_topIncreaseCount, query_topIncreases } from './server/handlers';
 
 const app = express()
 
-// proxy.setConfig(localProxy)
-// proxy.start()
+app.use(m_authentication)
+
+app.get('/', function (req, res) {
+    res.send('hello')
+})
+
+app.get('/top1s', query_topIncreases)
+app.get('/top1s/count', query_topIncreaseCount)
 
 initGlobalStatus()
     .then(() => {

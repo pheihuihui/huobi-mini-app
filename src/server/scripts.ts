@@ -43,3 +43,11 @@ export async function dropCollection(name: string) {
     let db = client.db(mongoDbName)
     await db.dropCollection(name)
 }
+
+export async function indexOn_content_rate() {
+    let client = await HuobiDataManager.getMongoClient()
+    let db = client.db(mongoDbName)
+    let coll = db.collection<TModel<'top1'>>(mongo_coll_name)
+    coll.createIndex({ 'content.rate': 1 }, { sparse: true })
+        .then(() => console.log('finished'))
+}
