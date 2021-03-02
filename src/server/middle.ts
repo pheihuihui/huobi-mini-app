@@ -16,3 +16,7 @@ export const m_log: TMiddleWare = function (req, res, next) {
     console.log('log')
     next()
 }
+
+export const m_cors: TMiddleWare = function (req, res, next) {
+
+}

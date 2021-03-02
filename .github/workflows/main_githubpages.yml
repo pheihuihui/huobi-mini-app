@@ -1,0 +1,35 @@
+name: deploy gh-pages
+on:
+  push:
+    branches:
+      - main
+jobs:
+  build:
+    name: Build and deploy gh-pages
+    env:
+      MY_SECRET   : ${{ secrets.CUBE_SECRET_NAME }}
+      USER_NAME   : pheihuihui
+      USER_EMAIL  : pheihuihui@fake.com
+      PUBLISH_DIR : dist
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [12.x]
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - name: npm install
+      run: |
+        npm install
+    - name: npm run build
+      run: |
+        npm run buildclient
+    - name: deploy
+      uses: JamesIves/github-pages-deploy-action@3.7.1
+      with:
+        GITHUB_TOKEN: ${{ secrets.CUBE_SECRET_NAME }}
+        BRANCH: gh-pages
+        FOLDER: dist
