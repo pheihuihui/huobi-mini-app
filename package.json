@@ -4,7 +4,7 @@
   "description": "huobi mini app",
   "main": "index.js",
   "scripts": {
-    "buildclient": "cross-env node ./build.js",
+    "buildclient": "node ./build.js",
     "test": "ts-node --project ./tsconfig.server.json ./src/server_test.ts",
     "start": "ts-node --project ./tsconfig.server.json ./src/server.ts"
   },
