@@ -18,6 +18,6 @@ fse.copy('./src/resources/global.css', './dist/global.css')
     .then(() => console.log('copy css success!'))
     .catch(err => console.error(err))
 
-fse.copy('./src/resources/main.html', './dist/main.html')
+fse.copy('./src/resources/main.html', './dist/index.html')
     .then(() => console.log('copy html success!'))
     .catch(err => console.error(err))
