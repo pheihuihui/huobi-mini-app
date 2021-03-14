@@ -22,9 +22,7 @@
     return target;
   };
   var __toModule = (module) => {
-    if (module && module.__esModule)
-      return module;
-    return __exportStar(__markAsModule(__defProp(module != null ? __create(__getProtoOf(module)) : {}, "default", {value: module, enumerable: true})), module);
+    return __exportStar(__markAsModule(__defProp(module != null ? __create(__getProtoOf(module)) : {}, "default", module && module.__esModule && "default" in module ? {get: () => module.default, enumerable: true} : {value: module, enumerable: true})), module);
   };
 
   // node_modules/object-assign/index.js
@@ -416,7 +414,7 @@
   // src/client/view/themes.ts
   var import_react = __toModule(require_react());
   var backgroundImage_dark = "linear-gradient(to right top, #2907de, #0048d7, #0050aa, #004e73, #00474a, #00494c, #004a4e, #004c50, #005780, #005cc0, #0054f2, #6200f9)";
-  var themeContext = import_react.createContext({});
+  var themeContext = (0, import_react.createContext)({});
 
   // src/client.ts
   var canv = document.createElement("canvas");
