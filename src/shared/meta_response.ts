@@ -24,7 +24,7 @@ export type TResp_v1_common_symbols = Array<{
     symbol: string
     state: 'online' | 'offline' | 'suspend' | 'pre-online',
     'min-order-value': number
-    'max-order-value': number
+    'max-order-value'?: number
 }>
 
 export type TResp_v1_account_accounts = Array<{

@@ -2,7 +2,7 @@ import ncron from 'node-cron'
 import { topSymbols, toSubscriptionStr, added, removed, sleep, tickersSinceLastTime } from '../shared/helper'
 import { ISub, IUnsub } from '../shared/meta'
 import { globals } from './global'
-import { TBaseCoin, TSymbolBoard } from './meta_mongo'
+import { TQuoteCoin, TSymbolBoard } from './meta_mongo'
 import { update_currencys, write_logs, write_symbols, write_tops } from './mongo_client'
 import { observer } from './observer'
 import { retrieveHuobiResponse } from './request'
@@ -99,13 +99,13 @@ export function retrieveAllSymbols() {
             let sbs = x.data
             let res: TSymbolBoard = {}
             sbs.forEach(v => {
-                let quote = v['quote-currency']
-                let base = v['base-currency'] as TBaseCoin
-                if (!res[quote]) {
-                    res[quote] = {}
+                let quote = v['quote-currency'] as TQuoteCoin
+                let base = v['base-currency']
+                if (!res[base]) {
+                    res[base] = {}
                 }
-                res[quote][base] = {
-                    maxOrderValue: v['max-order-value'],
+                res[base][quote] = {
+                    maxOrderValue: v['max-order-value'] ?? null,
                     minOrderValue: v['min-order-value']
                 }
             })

@@ -27,11 +27,11 @@ export type TIncrease = {
 
 export type TTops = Array<TIncrease>
 
-export const baseCoins = ['usdt', 'husd', 'btc', 'eth', 'ht'] as const
-export type TBaseCoin = (typeof baseCoins)[number]
-export type TSymbolBoard = Record<string, Partial<Record<TBaseCoin, {
+export const quoteCoins = ['usdt', 'husd', 'btc', 'eth', 'ht'] as const
+export type TQuoteCoin = (typeof quoteCoins)[number]
+export type TSymbolBoard = Record<string, Partial<Record<TQuoteCoin, {
     minOrderValue: number
-    maxOrderValue: number
+    maxOrderValue: number | null
 }>>>
 
 export interface IModels {
