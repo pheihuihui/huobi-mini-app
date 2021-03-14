@@ -10,8 +10,8 @@ import cors from 'cors'
 
 const app = express()
 
-app.use(m_authentication)
 app.use(cors())
+app.use(m_authentication)
 
 app.get('/', function (req, res) {
     res.send('hello')
