@@ -429,6 +429,7 @@
     ctx.fillStyle = "rgba(0, 0, 200, 0.5)";
     ctx.fillRect(30, 30, 55, 50);
   }
+  var urlPrefix = "https://cryptowatcher.azurewebsites.net/";
   function testConnection() {
     const url = "https://cryptowatcher.azurewebsites.net/top1s/count";
     fetch(url, {
@@ -438,7 +439,30 @@
         passwd: localStorage.getItem("passwd") ?? "",
         "Content-Type": "application/json"
       })
-    }).then((x) => console.log(x.status));
+    }).then((x) => x.json()).then((x) => console.log(x));
+  }
+  function listAllTop1s() {
+    const url = "https://cryptowatcher.azurewebsites.net/top1s";
+    fetch(url, {
+      mode: "cors",
+      method: "GET",
+      headers: new Headers({
+        passwd: localStorage.getItem("passwd") ?? "",
+        "Content-Type": "application/json"
+      })
+    }).then((x) => x.json()).then((x) => console.log(x));
+  }
+  function listAllSymbols() {
+    fetch(urlPrefix + "board", {
+      mode: "cors",
+      method: "GET",
+      headers: new Headers({
+        passwd: localStorage.getItem("passwd") ?? "",
+        "Content-Type": "application/json"
+      })
+    }).then((x) => x.json()).then((x) => console.log(x));
   }
   window.testConnection = testConnection;
+  window.listAllTop1s = listAllTop1s;
+  window.listAllSymbols = listAllSymbols;
 })();
