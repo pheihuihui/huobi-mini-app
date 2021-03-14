@@ -14,6 +14,8 @@ if (ctx) {
     ctx.fillRect(30, 30, 55, 50);
 }
 
+const urlPrefix = 'https://cryptowatcher.azurewebsites.net/'
+
 function testConnection() {
     const url = 'https://cryptowatcher.azurewebsites.net/top1s/count'
     fetch(url, {
@@ -24,13 +26,45 @@ function testConnection() {
             'Content-Type': 'application/json'
         })
     })
-        .then(x => console.log(x.status))
+        .then(x => x.json())
+        .then(x => console.log(x))
+}
+
+function listAllTop1s() {
+    const url = 'https://cryptowatcher.azurewebsites.net/top1s'
+    fetch(url, {
+        mode: 'cors',
+        method: 'GET',
+        headers: new Headers({
+            'passwd': localStorage.getItem('passwd') ?? '',
+            'Content-Type': 'application/json'
+        })
+    })
+        .then(x => x.json())
+        .then(x => console.log(x))
+}
+
+function listAllSymbols() {
+    fetch(urlPrefix + 'board', {
+        mode: 'cors',
+        method: 'GET',
+        headers: new Headers({
+            'passwd': localStorage.getItem('passwd') ?? '',
+            'Content-Type': 'application/json'
+        })
+    })
+        .then(x => x.json())
+        .then(x => console.log(x))
 }
 
 declare global {
     interface Window {
         testConnection: any
+        listAllTop1s: any
+        listAllSymbols: any
     }
 }
 
 window.testConnection = testConnection
+window.listAllTop1s = listAllTop1s
+window.listAllSymbols = listAllSymbols

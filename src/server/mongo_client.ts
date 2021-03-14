@@ -1,7 +1,7 @@
 import { Cursor, FilterQuery, MongoClient } from 'mongodb'
 import { TTrade } from '../shared/meta_request'
 import { globals } from './global'
-import { TCurrencys, TIncrease, TModel, TModelName, TTops } from './meta_mongo'
+import { TCurrencys, TIncrease, TModel, TModelName, TSymbolBoard, TTops } from './meta_mongo'
 
 const mongoDbName = 'HuobiData'
 const mongoCollName = 'HuobiColl'
@@ -137,4 +137,25 @@ export async function countTop1s() {
         'content.sharp': true
     })
     return await curs.count()
+}
+
+export async function write_symbols(board: TSymbolBoard) {
+    HuobiDataManager.getMongoClient()
+        .then(client => {
+            let db = client.db(mongoDbName)
+            let coll = db.collection<TModel<'symbolBoard'>>(mongoCollName)
+            coll.insertOne({
+                timestamp: Date.now(),
+                type: 'symbolBoard',
+                content: board
+            }).then(res => {
+                console.log(res.result)
+            })
+        })
+}
+
+export async function getBoard() {
+    let coll = await getCollection('symbolBoard')
+    let board = await coll.findOne({ type: 'symbolBoard' }, { sort: { timestamp: -1 } })
+    return board
 }

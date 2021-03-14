@@ -15,15 +15,17 @@ export type TPromiseRespV2<T> = Promise<TRespV2<T>>
 
 export type TResp_v1_order_orders = any //todo
 
-export type TResp_v1_common_symbols = {
+export type TResp_v1_common_symbols = Array<{
     'base-currency': string
     'quote-currency': string
     'api-trading': boolean
     "price-precision": number
     "amount-precision": number
     symbol: string
-    state: 'online' | 'offline' | 'suspend' | 'pre-online'
-}
+    state: 'online' | 'offline' | 'suspend' | 'pre-online',
+    'min-order-value': number
+    'max-order-value': number
+}>
 
 export type TResp_v1_account_accounts = Array<{
     id: number

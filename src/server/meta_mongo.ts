@@ -27,12 +27,20 @@ export type TIncrease = {
 
 export type TTops = Array<TIncrease>
 
+export const baseCoins = ['usdt', 'husd', 'btc', 'eth', 'ht'] as const
+export type TBaseCoin = (typeof baseCoins)[number]
+export type TSymbolBoard = Record<string, Partial<Record<TBaseCoin, {
+    minOrderValue: number
+    maxOrderValue: number
+}>>>
+
 export interface IModels {
     currencys: TCurrencys
     log: TTradingLog
     info: TInfo
     tops: TTops
     top1: TIncrease
+    symbolBoard: TSymbolBoard
 }
 
 export type TModelName = keyof IModels

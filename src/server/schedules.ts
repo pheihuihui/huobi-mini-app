@@ -2,7 +2,8 @@ import ncron from 'node-cron'
 import { topSymbols, toSubscriptionStr, added, removed, sleep, tickersSinceLastTime } from '../shared/helper'
 import { ISub, IUnsub } from '../shared/meta'
 import { globals } from './global'
-import { update_currencys, write_logs, write_tops } from './mongo_client'
+import { TBaseCoin, TSymbolBoard } from './meta_mongo'
+import { update_currencys, write_logs, write_symbols, write_tops } from './mongo_client'
 import { observer } from './observer'
 import { retrieveHuobiResponse } from './request'
 import { n_hbsocket, openNodeWebSocket } from './socket_node'
@@ -87,3 +88,27 @@ export const cron_every_hour = ncron.schedule('0 0 * * * *', () => {
             }
         })
 }, { scheduled: false })
+
+export const cron_every_day = ncron.schedule('0 0 0 * * *', () => {
+    retrieveAllSymbols()
+}, { scheduled: false })
+
+export function retrieveAllSymbols() {
+    retrieveHuobiResponse('/v1/common/symbols', {})
+        .then(x => {
+            let sbs = x.data
+            let res: TSymbolBoard = {}
+            sbs.forEach(v => {
+                let quote = v['quote-currency']
+                let base = v['base-currency'] as TBaseCoin
+                if (!res[quote]) {
+                    res[quote] = {}
+                }
+                res[quote][base] = {
+                    maxOrderValue: v['max-order-value'],
+                    minOrderValue: v['min-order-value']
+                }
+            })
+            write_symbols(res)
+        })
+}
