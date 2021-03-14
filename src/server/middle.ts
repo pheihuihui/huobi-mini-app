@@ -17,6 +17,6 @@ export const m_log: TMiddleWare = function (req, res, next) {
     next()
 }
 
-export const m_cors: TMiddleWare = function (req, res, next) {
-
-}
+// export const m_cors: TMiddleWare = function (req, res, next) {
+    
+// }

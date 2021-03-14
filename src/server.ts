@@ -6,10 +6,12 @@ import { localProxy } from './shared/constants';
 import { openNodeWebSocket } from './server/socket_node';
 import { m_authentication, m_log } from './server/middle';
 import { query_topIncreaseCount, query_topIncreases } from './server/handlers';
+import cors from 'cors'
 
 const app = express()
 
 app.use(m_authentication)
+app.use(cors())
 
 app.get('/', function (req, res) {
     res.send('hello')
