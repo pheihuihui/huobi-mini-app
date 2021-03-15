@@ -1,4 +1,5 @@
 import express from 'express'
+import { testDelay } from './jobs'
 import { countTop1s, getBoard, getTopIncreases } from './mongo_client'
 
 type THandler = (req: express.Request, res: express.Response) => void
@@ -16,4 +17,9 @@ export const query_topIncreaseCount: THandler = async function (req, res) {
 export const query_board: THandler = async function (req, res) {
     let board = await getBoard()
     res.json(board)
+}
+
+export const query_delay: THandler = async function (req, res) {
+    let dl = await testDelay()
+    res.json(dl)
 }

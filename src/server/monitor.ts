@@ -1,8 +1,7 @@
-export class Monitor{
+export class Monitor {
     private watchList: string[]
-    constructor(){
+    constructor() {
         this.watchList = []
     }
 
-    
 }

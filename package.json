@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "buildclient": "node ./build.js",
+    "startclient": "http-server ./dist",
     "test": "ts-node --project ./tsconfig.server.json ./src/server_test.ts",
     "start": "ts-node --project ./tsconfig.server.json ./src/server.ts"
   },
