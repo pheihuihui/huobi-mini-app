@@ -1,4 +1,3 @@
-import { TTops } from "../server/meta_mongo"
 import { TPeriod } from "./meta"
 import { TResp_market_tickers } from "./meta_response"
 
@@ -31,27 +30,6 @@ export const matchLast = (str1: string, str2: string) => {
         if (ch1 != ch2) return false
     }
     return true
-}
-
-export const topSymbols: (data: TSimpleTicker[], num: number, base?: string) => TTops = (data, num, base?) => {
-    let baseCoin = base ?? 'usdt'
-    let usdttickers = data.filter(v => matchLast(v.symbol, baseCoin))
-    let topten: TTops = usdttickers
-        .sort((a, b) => {
-            let aa = a.close / a.open - 1
-            let bb = b.close / b.open - 1
-            return bb - aa
-        })
-        .filter((v, i) => i < num)
-        .map(x => {
-            let rt = x.close / x.open - 1
-            return {
-                symbol: x.symbol,
-                rate: rt,
-                sharp: false
-            }
-        })
-    return topten
 }
 
 export const toSubscriptionStr = (symbol: string, period: TPeriod) => `market.${symbol}.kline.${period}`
@@ -91,4 +69,22 @@ export const tickersSinceLastTime = (last: TResp_market_tickers, cur: TResp_mark
 
 export const fixed8 = (num: number) => {
     return Number(Number(num).toFixed(8))
+}
+
+export const combineUrl = (path: string, paras: Record<string, string>) => {
+    return path
+        .split('/')
+        .map(x => {
+            if (x[0] == ':') {
+                let name = x.slice(1)
+                if (paras[name]) {
+                    return paras[name]
+                } else {
+                    return ''
+                }
+            } else {
+                return x
+            }
+        })
+        .join('/')
 }

@@ -18,6 +18,7 @@ import {
     TResp_v1_common_symbols,
     TResp_v1_order_batch_orders,
     TResp_v1_order_orders,
+    TResp_v1_order_orders_$order_id$,
     TResp_v1_order_orders_place,
     TResp_v2_account_asset_valuation
 } from './meta_response'
@@ -95,7 +96,7 @@ export type TResponseMap = {
     '/v1/common/currencys': TResp_v1_common_currencys
     '/v1/order/orders/place': TResp_v1_order_orders_place
     '/market/tickers': TResp_market_tickers
-    '/v1/order/orders/{order-id}': TResp_v1_order_orders_place
+    '/v1/order/orders/{order-id}': TResp_v1_order_orders_$order_id$
     '/v1/order/batch-orders': TResp_v1_order_batch_orders
 } | Record<TRequestName, never>
 

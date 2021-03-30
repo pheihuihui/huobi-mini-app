@@ -61,3 +61,33 @@ async function buildUrlFromAllFields_GET_browser(reqName: string, jsonParas: Rec
     let part3 = await to64_browser(part2, huobi_read_secret)
     return `${reqname}?${part1}&Signature=${part3}`
 }
+
+
+const urlPrefix_cloud = 'https://cryptowatcher.azurewebsites.net'
+const urlPrefix_local = 'http://127.0.0.1:3000'
+
+function switchTo(env: 'cloud' | 'local') {
+    if (env == 'cloud') {
+        localStorage['urlPrefix'] = urlPrefix_cloud
+    }
+    if (env == 'local') {
+        localStorage['urlPrefix'] = urlPrefix_local
+    }
+}
+
+declare global {
+
+    interface Window {
+        switchTo: any
+    }
+
+    interface Storage {
+        urlPrefix: string
+        passwd: string
+    }
+
+}
+
+export function setEnv() {
+    window.switchTo = switchTo
+}

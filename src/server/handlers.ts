@@ -1,25 +1,47 @@
 import express from 'express'
-import { testDelay } from './jobs'
-import { countTop1s, getBoard, getTopIncreases } from './mongo_client'
+import { TClientReqAndRespMap } from '../shared/meta_client2azure'
+import { buy, retrieveAllSymbols_stair, sell } from './jobs'
+import { retrieveHuobiResponse } from './request'
 
-type THandler = (req: express.Request, res: express.Response) => void
-
-export const query_topIncreases: THandler = async function (req, res) {
-    let ret = await getTopIncreases()
-    res.json({ result: ret })
+type THandlerInfo<T extends keyof TClientReqAndRespMap> = {
+    name: T,
+    type: TClientReqAndRespMap[T]['requestType'],
+    handler: (req: express.Request<{}, {}, TClientReqAndRespMap[T]['requestBody']>, res: express.Response<TClientReqAndRespMap[T]['response']>) => void
 }
 
-export const query_topIncreaseCount: THandler = async function (req, res) {
-    let num = await countTop1s()
-    res.json({ result: num })
+const post_buy: THandlerInfo<'/buy'> = {
+    name: '/buy',
+    type: 'POST',
+    handler: async (req, res) => {
+        let coin = req.body.coin
+        let ret1 = await buy(coin)
+        let ret2 = await retrieveHuobiResponse('/v1/order/orders/{order-id}', { path: ret1 })
+        res.json(ret2.data)
+    }
 }
 
-export const query_board: THandler = async function (req, res) {
-    let board = await getBoard()
-    res.json(board)
+const post_sell: THandlerInfo<'/sell'> = {
+    name: '/sell',
+    type: 'POST',
+    handler: async (req, res) => {
+        let coin = req.body.coin
+        let ret1 = await sell(coin)
+        let ret2 = await retrieveHuobiResponse('/v1/order/orders/{order-id}', { path: ret1 })
+        res.json(ret2.data)
+    }
 }
 
-export const query_delay: THandler = async function (req, res) {
-    let dl = await testDelay()
-    res.json(dl)
+const query_symbols_stair: THandlerInfo<'/query/symbols/stair'> = {
+    name: '/query/symbols/stair',
+    type: 'GET',
+    handler: async (req, res) => {
+        let ret = await retrieveAllSymbols_stair()
+        res.json(ret)
+    }
 }
+
+export const handlers: THandlerInfo<any>[] = [
+    post_buy,
+    post_sell,
+    query_symbols_stair
+]

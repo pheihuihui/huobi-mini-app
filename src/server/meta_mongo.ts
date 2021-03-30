@@ -1,46 +1,44 @@
 import { TTrade } from "../shared/meta_request"
 
-export type TCurrencys = {
-    length: number
-    added_currencys: Array<string>
-    removed_currencys: Array<string>
-    all_currencys: Array<string>
-}
-
-export type TTradingLog = {
-    trade_type: TTrade
-    symbol: string
-    amount: number
-    price: number
-}
-
-export type TInfo = {
-    text: string
-}
-
-export type TIncrease = {
-    symbol: string
-    rate: number
-    sharp: boolean
-    fluctuation?: Record<number, number>
-}
-
-export type TTops = Array<TIncrease>
-
-export const quoteCoins = ['usdt', 'husd', 'btc', 'eth', 'ht'] as const
+export const quoteCoins = ['usdt', 'btc', 'eth', 'ht', 'husd'] as const
 export type TQuoteCoin = (typeof quoteCoins)[number]
-export type TSymbolBoard = Record<string, Partial<Record<TQuoteCoin, {
-    minOrderValue: number
-    maxOrderValue: number | null
-}>>>
 
 export interface IModels {
-    currencys: TCurrencys
-    log: TTradingLog
-    info: TInfo
-    tops: TTops
-    top1: TIncrease
-    symbolBoard: TSymbolBoard
+    currencys: {
+        length: number
+        added_currencys: Array<string>
+        removed_currencys: Array<string>
+        all_currencys: Array<string>
+    }
+    log: {
+        trade_type: TTrade
+        symbol: string
+        amount: number
+        price: number
+    }
+    info: {
+        text: string
+    }
+    top1: {
+        symbol: string
+        rate: number
+        sharp: boolean
+        fluctuation?: Record<number, number>
+    }
+    symbolBoard: Record<string, Partial<Record<TQuoteCoin, {
+        minOrderValue: number
+        maxOrderValue: number | null
+    }>>>
+    bigRise: {
+        symbol: string
+        rate: number
+        fluctuation: Record<number, number>
+    }
+    bigFall: {
+        symbol: string
+        rate: number
+        fluctuation: Record<number, number>
+    }
 }
 
 export type TModelName = keyof IModels

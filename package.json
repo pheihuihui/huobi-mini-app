@@ -4,10 +4,10 @@
   "description": "huobi mini app",
   "main": "index.js",
   "scripts": {
-    "buildclient": "node ./build.js",
-    "startclient": "http-server ./dist",
-    "test": "ts-node --project ./tsconfig.server.json ./src/server_test.ts",
-    "start": "ts-node --project ./tsconfig.server.json ./src/server.ts"
+    "build:client": "node ./build.js",
+    "start:client": "http-server ./dist",
+    "start": "ts-node --project ./tsconfig.server.json ./src/server.ts",
+    "test": ""
   },
   "repository": {
     "type": "git",
@@ -22,6 +22,7 @@
   "dependencies": {
     "@azure/identity": "^1.2.4",
     "@azure/keyvault-secrets": "^4.1.0",
+    "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "esbuild": "^0.8.57",
     "express": "^4.17.1",

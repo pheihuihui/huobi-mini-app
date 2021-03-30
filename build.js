@@ -7,7 +7,7 @@ esbuild.buildSync({
     outfile: './dist/bundle.js',
     tsconfig: 'tsconfig.json',
     bundle: true,
-    define: { 'process.env.NODE_ENV': '"production"' }
+    define: { 'process.env.NODE_ENV': '"devlopment"' }
 })
 
 fse.copy('./src/resources/favicon.ico', './dist/favicon.ico')

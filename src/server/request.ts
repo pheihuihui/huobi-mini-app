@@ -4,8 +4,7 @@ import { TRequestMap, TReqParas, requestInfoMap, TReqMethod, TApiType, TResponse
 import nfetch, { Response } from 'node-fetch'
 import { getCommonReqFieldsData, to64_node } from './helper_node'
 import { TReqBase } from '../shared/meta_request'
-import { huobi_read_secret, huobi_trade_secret } from './credentials'
-import { TPromiseRespV1, TPromiseRespV2, TRespV1, TRespV2 } from '../shared/meta_response'
+import { TRespV1, TRespV2 } from '../shared/meta_response'
 import { globals } from './global'
 
 export async function retrieveHuobiResponse<K extends keyof TResponseMap>(reqName: K, paras: TReqParas<K>) {

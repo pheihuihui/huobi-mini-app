@@ -1,11 +1,11 @@
+import proxy from 'node-global-proxy'
 import nWebSocket from 'ws'
-import { TSimpleTicker } from '../shared/helper'
-import { TResp_market_tickers } from '../shared/meta_response'
+import { localProxy } from '../shared/constants'
 import { CUSTOMCONNSTR_cosmosstring, huobi_read_access, huobi_read_secret, huobi_trade_access, huobi_trade_secret } from './credentials'
 import { retrieveSecret } from './helper_node'
-import { HuobiDataManager, read_currencys } from './mongo_client'
+import { readOneItem } from './mongo_client'
 import { retrieveHuobiResponse } from './request'
-import { retrieveHoldings } from './trader'
+import { retrieveHoldings } from './jobs'
 
 type TGlobalServerStatus = {
     socket: nWebSocket | null
@@ -54,10 +54,12 @@ export async function initGlobalStatus() {
             huobi_trade_secret: huobi_trade_secret,
             cosmosConnStr: CUSTOMCONNSTR_cosmosstring
         }
+        proxy.setConfig(localProxy)
+        proxy.start()
     }
     await retrieveAccountID()
     await retrieveHoldings()
-    await read_currencys()
+    await retrieveAllCurrencys()
 }
 
 async function retrieveAccountID() {
@@ -69,4 +71,10 @@ async function retrieveAccountID() {
             }
         })
     }
+}
+
+async function retrieveAllCurrencys() {
+    let curs = await readOneItem('currencys')
+    globals.currencys = curs?.all_currencys ?? []
+    globals.currencysCount = curs?.length ?? 0
 }
