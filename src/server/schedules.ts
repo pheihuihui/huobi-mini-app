@@ -1,6 +1,6 @@
 import ncron from 'node-cron'
 import { globals } from './global'
-import { reconnectSocket, retrieveAllSymbols, retriveNewCurrencys } from './jobs'
+import { buyNewCoin, reconnectSocket, retrieveAllSymbols, retriveNewCurrencys } from './jobs'
 import { insertNewItem } from './mongo_client'
 import { observer } from './observer'
 import { retrieveHuobiResponse } from './request'
@@ -10,17 +10,21 @@ export const cron_every_10sec = ncron.schedule('*/10 * * * * *', () => {
 
 }, { scheduled: false })
 
-export const cron_every_hour = ncron.schedule('0 0 * * * *', () => {
-    ///
+export const cron_every_hour = ncron.schedule('0 0 * * * *', async () => {
+    //
     reconnectSocket()
 
-    ///
-    retriveNewCurrencys()
+    //
+    let curs = await retriveNewCurrencys()
+    if (curs?.AddedCurrencys) {
+        let coin = curs.AddedCurrencys[0]
+        buyNewCoin(coin)
+    }
 
 }, { scheduled: false })
 
 export const cron_every_day = ncron.schedule('0 0 0 * * *', () => {
-    ///
+    //
     retrieveAllSymbols()
         .then(x => insertNewItem('symbolBoard', x))
 

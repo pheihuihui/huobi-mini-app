@@ -12,7 +12,6 @@ type TGlobalServerStatus = {
     state: 'locked' | 'free'
     accountID: string
     holdings: Record<string, number>
-    currencysCount: number
     currencys: Array<string>
     secrets: {
         huobi_read_access: string
@@ -28,7 +27,6 @@ export const globals: TGlobalServerStatus = {
     state: 'free',
     accountID: '',
     holdings: {},
-    currencysCount: 0,
     currencys: [],
     secrets: {
         huobi_read_access: '',
@@ -59,7 +57,6 @@ export async function initGlobalStatus() {
     }
     await retrieveAccountID()
     await retrieveHoldings()
-    await retrieveAllCurrencys()
 }
 
 async function retrieveAccountID() {
@@ -71,10 +68,4 @@ async function retrieveAccountID() {
             }
         })
     }
-}
-
-async function retrieveAllCurrencys() {
-    let curs = await readOneItem('currencys')
-    globals.currencys = curs?.all_currencys ?? []
-    globals.currencysCount = curs?.length ?? 0
 }

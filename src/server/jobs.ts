@@ -31,7 +31,7 @@ export async function sell(coin: string, paras?: { amount?: number, quoteCoin?: 
         })
         let lst = resp.data.list.filter(x => x.currency == coin && x.type == 'trade')
         if (lst.length == 1) {
-            amount = Math.floor(lst[0].balance)
+            amount = Math.floor(lst[0].balance * 100000000) / 100000000
         }
     }
     let res = await retrieveHuobiResponse('/v1/order/orders/place', {
@@ -59,7 +59,7 @@ export async function buy(coin: string, paras?: { amount?: number, quoteCoin?: s
         })
         let lst = resp.data.list.filter(x => x.currency == 'usdt' && x.type == 'trade')
         if (lst.length == 1) {
-            amount = Math.floor(lst[0].balance)
+            amount = Math.floor(lst[0].balance * 100000000) / 100000000
         }
     }
     let res = await retrieveHuobiResponse('/v1/order/orders/place', {
@@ -71,6 +71,14 @@ export async function buy(coin: string, paras?: { amount?: number, quoteCoin?: s
         }
     })
     return res.data
+}
+
+export async function transfer2usdt() {
+    await buy('usdt', { quoteCoin: 'btc' })
+}
+
+export async function transfer2btc() {
+    await buy('btc', { quoteCoin: 'usdt' })
 }
 
 export async function retrieveAllSymbols() {
@@ -121,20 +129,14 @@ export async function retriveNewCurrencys() {
     return retrieveHuobiResponse('/v1/common/currencys', {})
         .then(x => {
             let curs = x.data
-            let curs_count = curs.length
             let addedCurs: string[] = []
             let removedCurs: string[] = []
-            if (curs_count > globals.currencysCount) {
-                addedCurs = added(globals.currencys, curs)
-            } else {
-                let addedCurs = added(globals.currencys, curs)
-            }
+            addedCurs = added(globals.currencys, curs)
             removedCurs = removed(globals.currencys, curs)
             if (addedCurs.length > 0) {
                 globals.currencys = curs
-                globals.currencysCount = curs_count
                 return {
-                    newCurrencys: addedCurs,
+                    AddedCurrencys: addedCurs,
                     removedCurrencys: removedCurs
                 }
             }
@@ -160,4 +162,13 @@ export async function retrieveHoldings() {
         }
     }
     return res
+}
+
+export async function buyNewCoin(coin: string) {
+    let resp1 = await buy(coin)
+    let resp2 = await retrieveHuobiResponse('/v1/order/orders/{order-id}', { path: resp1 })
+    if (resp2.status == 'error') {
+        await transfer2btc()
+        buy(coin, { quoteCoin: 'btc' })
+    }
 }
