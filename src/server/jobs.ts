@@ -1,6 +1,6 @@
-import { added, removed } from "../shared/helper";
+import { added, quoteCoins, removed, TQuoteCoin } from "../shared/helper";
 import { globals } from "./global";
-import { IModels, quoteCoins, TQuoteCoin } from "./meta_mongo";
+import { IModels } from "./meta_mongo";
 import { insertNewItem } from "./mongo_client";
 import { retrieveHuobiResponse } from "./request";
 import { n_hbsocket, openNodeWebSocket } from "./socket_node";
@@ -165,10 +165,28 @@ export async function retrieveHoldings() {
 }
 
 export async function buyNewCoin(coin: string) {
+    let text = new Date().toUTCString()
+    text += `\n${coin}`
     let resp1 = await buy(coin)
     let resp2 = await retrieveHuobiResponse('/v1/order/orders/{order-id}', { path: resp1 })
+    text += '\n'
+    if (resp2.status == 'ok') {
+        text += JSON.stringify(resp2.data)
+        insertNewItem('info', { text: text })
+    }
     if (resp2.status == 'error') {
         await transfer2btc()
-        buy(coin, { quoteCoin: 'btc' })
+        let resp3 = await buy(coin, { quoteCoin: 'btc' })
+        let resp4 = await retrieveHuobiResponse('/v1/order/orders/{order-id}', { path: resp3 })
+        text += JSON.stringify(resp4.data)
+        insertNewItem('info', { text: text })
     }
+}
+
+export async function sortAllTickers() {
+    let resp1 = await retrieveHuobiResponse('/market/tickers', {})
+    let lastTickers = globals.lastTickers
+    let curTickers = resp1.data
+    let allSymbols = await retrieveAllSymbols_stair()
+    
 }

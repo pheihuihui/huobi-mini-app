@@ -2,7 +2,6 @@ import ncron from 'node-cron'
 import { globals } from './global'
 import { buyNewCoin, reconnectSocket, retrieveAllSymbols, retriveNewCurrencys } from './jobs'
 import { insertNewItem } from './mongo_client'
-import { observer } from './observer'
 import { retrieveHuobiResponse } from './request'
 import { n_hbsocket, openNodeWebSocket } from './socket_node'
 

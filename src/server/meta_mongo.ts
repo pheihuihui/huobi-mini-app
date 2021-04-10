@@ -1,7 +1,5 @@
+import { TQuoteCoin } from "../shared/helper"
 import { TTrade } from "../shared/meta_request"
-
-export const quoteCoins = ['usdt', 'btc', 'eth', 'ht', 'husd'] as const
-export type TQuoteCoin = (typeof quoteCoins)[number]
 
 export interface IModels {
     currencys: {

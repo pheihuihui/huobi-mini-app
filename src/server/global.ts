@@ -6,6 +6,7 @@ import { retrieveSecret } from './helper_node'
 import { readOneItem } from './mongo_client'
 import { retrieveHuobiResponse } from './request'
 import { retrieveHoldings } from './jobs'
+import { TResp_market_tickers } from '../shared/meta_response'
 
 type TGlobalServerStatus = {
     socket: nWebSocket | null
@@ -13,6 +14,7 @@ type TGlobalServerStatus = {
     accountID: string
     holdings: Record<string, number>
     currencys: Array<string>
+    lastTickers: TResp_market_tickers
     secrets: {
         huobi_read_access: string
         huobi_read_secret: string
@@ -28,6 +30,7 @@ export const globals: TGlobalServerStatus = {
     accountID: '',
     holdings: {},
     currencys: [],
+    lastTickers: [],
     secrets: {
         huobi_read_access: '',
         huobi_read_secret: '',

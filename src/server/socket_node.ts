@@ -2,7 +2,6 @@ import { huobiwss } from "../shared/constants"
 import { ISub, IPing, IPong, IUnsub } from "../shared/meta"
 import nWebSocket from 'ws'
 import { gunzip } from 'zlib'
-import { observer } from "./observer"
 import { TTick } from "../shared/meta_socket"
 
 export let n_hbsocket: nWebSocket
@@ -23,7 +22,6 @@ export function openNodeWebSocket() {
                 let ts = obj.ts as number
                 let ch = obj.ch as string
                 let symbol = ch.split('.')[1]
-                observer.update(ts, symbol, obj.tick as TTick)
             }
         })
     }

@@ -2,6 +2,16 @@ import { TPeriod } from "./meta"
 import { TResp_market_tickers } from "./meta_response"
 
 export type TSimpleTicker = { symbol: string, open: number, close: number }
+export type TCustomizedTicker = {
+    symbol: string
+    quoteCoin: TQuoteCoin
+    open: number
+    close: number
+    L?: 2 | 3
+    S?: 2 | 3
+}
+export const quoteCoins = ['usdt', 'btc', 'eth', 'ht', 'trx', 'husd'] as const
+export type TQuoteCoin = (typeof quoteCoins)[number]
 
 export const parenthesesFilled = (before: string, content: string) => {
     let res = before
@@ -65,6 +75,10 @@ export const tickersSinceLastTime = (last: TResp_market_tickers, cur: TResp_mark
         }
     }
     return res
+}
+
+export const _tickersSinceLastTime = (last: TResp_market_tickers, cur: TResp_market_tickers) => {
+
 }
 
 export const fixed8 = (num: number) => {
