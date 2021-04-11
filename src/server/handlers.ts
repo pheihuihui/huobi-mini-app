@@ -1,5 +1,6 @@
 import express from 'express'
 import { TClientReqAndRespMap } from '../shared/meta_client2azure'
+import { globals } from './global'
 import { buy, retrieveAllSymbols_stair, sell } from './jobs'
 import { retrieveHuobiResponse } from './request'
 
@@ -36,6 +37,20 @@ const query_symbols_stair: THandlerInfo<'/query/symbols/stair'> = {
     type: 'GET',
     handler: async (req, res) => {
         let ret = await retrieveAllSymbols_stair()
+        res.json(ret)
+    }
+}
+
+const query_server_status: THandlerInfo<'/server/status'> = {
+    name: '/server/status',
+    type: 'GET',
+    handler: (req, res) => {
+        let ret = {
+            lastTickers: globals.lastTickers,
+            holdings: globals.holdings,
+            currencies: globals.currencys,
+            symbols: globals.allSymbols
+        }
         res.json(ret)
     }
 }

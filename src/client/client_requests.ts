@@ -61,7 +61,7 @@ function allOut(cur: string) {
 }
 
 function testConnection() {
-    sendRequest('/query/symbols/stair', { type: 'GET' })
+    sendRequest('/server/status', { type: 'GET' })
         .then(x => console.log(x))
 }
 

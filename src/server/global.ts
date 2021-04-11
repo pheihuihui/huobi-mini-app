@@ -7,14 +7,16 @@ import { readOneItem } from './mongo_client'
 import { retrieveHuobiResponse } from './request'
 import { retrieveHoldings } from './jobs'
 import { TResp_market_tickers } from '../shared/meta_response'
+import { TSymbolsStair } from '../shared/helper'
 
 type TGlobalServerStatus = {
     socket: nWebSocket | null
-    state: 'locked' | 'free'
+    state: 'locked' | 'free' | '_'
     accountID: string
     holdings: Record<string, number>
     currencys: Array<string>
     lastTickers: TResp_market_tickers
+    allSymbols: TSymbolsStair
     secrets: {
         huobi_read_access: string
         huobi_read_secret: string
@@ -26,11 +28,12 @@ type TGlobalServerStatus = {
 
 export const globals: TGlobalServerStatus = {
     socket: null,
-    state: 'free',
+    state: '_',
     accountID: '',
     holdings: {},
     currencys: [],
     lastTickers: [],
+    allSymbols: {},
     secrets: {
         huobi_read_access: '',
         huobi_read_secret: '',
@@ -55,20 +58,27 @@ export async function initGlobalStatus() {
             huobi_trade_secret: huobi_trade_secret,
             cosmosConnStr: CUSTOMCONNSTR_cosmosstring
         }
-        proxy.setConfig(localProxy)
-        proxy.start()
+        startProxy()
     }
     await retrieveAccountID()
     await retrieveHoldings()
+    let tickers = await retrieveHuobiResponse('/market/tickers', {})
+    globals.lastTickers = tickers.data
+}
+
+function startProxy() {
+    proxy.setConfig(localProxy)
+    proxy.start()
 }
 
 async function retrieveAccountID() {
     let resp = await retrieveHuobiResponse('/v1/account/accounts', {})
     if (resp.status == 'ok') {
-        resp.data.forEach(x => {
-            if (x.type == 'spot') {
-                globals.accountID = Number(x.id).toString()
-            }
-        })
+        let filtered = resp.data.filter(x => x.state == 'working' && x.type == 'spot')
+        if (filtered.length == 1) {
+            let tmp = filtered[0]
+            globals.accountID = Number(tmp.id).toString()
+            globals.state = 'free'
+        }
     }
 }

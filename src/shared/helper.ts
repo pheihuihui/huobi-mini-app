@@ -12,6 +12,7 @@ export type TCustomizedTicker = {
 }
 export const quoteCoins = ['usdt', 'btc', 'eth', 'ht', 'trx', 'husd'] as const
 export type TQuoteCoin = (typeof quoteCoins)[number]
+export type TSymbolsStair = Partial<Record<TQuoteCoin, string[]>>
 
 export const parenthesesFilled = (before: string, content: string) => {
     let res = before
@@ -64,7 +65,7 @@ export function sleep(ms: number) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-export const tickersSinceLastTime = (last: TResp_market_tickers, cur: TResp_market_tickers, base?: string) => {
+export const _tickersSinceLastTime = (last: TResp_market_tickers, cur: TResp_market_tickers, base?: string) => {
     let baseCoin = base ?? 'usdt'
     let res: TSimpleTicker[] = []
     let cur_base = cur.filter(x => matchLast(x.symbol, baseCoin))
@@ -77,8 +78,37 @@ export const tickersSinceLastTime = (last: TResp_market_tickers, cur: TResp_mark
     return res
 }
 
-export const _tickersSinceLastTime = (last: TResp_market_tickers, cur: TResp_market_tickers) => {
-
+export const tickersSinceLastTime = (last: TResp_market_tickers, cur: TResp_market_tickers, stair: TSymbolsStair) => {
+    let res: Partial<Record<TQuoteCoin, TCustomizedTicker[]>> = {}
+    for (const key in stair) {
+        if (Object.prototype.hasOwnProperty.call(stair, key)) {
+            const element = stair[key as TQuoteCoin];
+            if (element) {
+                for (const u of element) {
+                    let ll = last.find(x => x.symbol == u)
+                    let cc = cur.find(x => x.symbol == u)
+                    let rec: TCustomizedTicker = {
+                        symbol: u,
+                        quoteCoin: key as TQuoteCoin,
+                        open: -1,
+                        close: -1
+                    }
+                    if (ll && cc) {
+                        rec.open = ll.close
+                        rec.close = cc.close
+                    } else if (cc) {
+                        rec.close = cc.close
+                    }
+                    if (res[key as TQuoteCoin]) {
+                        res[key as TQuoteCoin]?.push(rec)
+                    } else {
+                        res[key as TQuoteCoin] = [rec]
+                    }
+                }
+            }
+        }
+    }
+    return res
 }
 
 export const fixed8 = (num: number) => {

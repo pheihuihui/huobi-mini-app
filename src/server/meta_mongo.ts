@@ -37,6 +37,9 @@ export interface IModels {
         rate: number
         fluctuation: Record<number, number>
     }
+    serverLog: {
+        serverLog: string
+    }
 }
 
 export type TModelName = keyof IModels

@@ -29,7 +29,7 @@ export type TResp_v1_common_symbols = Array<{
 
 export type TResp_v1_account_accounts = Array<{
     id: number
-    state: string
+    state: 'working' | 'lock'
     type: 'otc' | 'spot'
     subtype: string
 }>

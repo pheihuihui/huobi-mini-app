@@ -1,4 +1,4 @@
-import { added, quoteCoins, removed, TQuoteCoin } from "../shared/helper";
+import { added, quoteCoins, removed, tickersSinceLastTime, TQuoteCoin, TSymbolsStair } from "../shared/helper";
 import { globals } from "./global";
 import { IModels } from "./meta_mongo";
 import { insertNewItem } from "./mongo_client";
@@ -104,7 +104,7 @@ export async function retrieveAllSymbols() {
 export async function retrieveAllSymbols_stair() {
     return retrieveAllSymbols()
         .then(x => {
-            let res: Partial<Record<TQuoteCoin, string[]>> = {}
+            let res: TSymbolsStair = {}
             for (const curr in x) {
                 if (Object.prototype.hasOwnProperty.call(x, curr)) {
                     const element = x[curr];
@@ -183,10 +183,29 @@ export async function buyNewCoin(coin: string) {
     }
 }
 
-export async function sortAllTickers() {
+async function _sortAllTickers() {
     let resp1 = await retrieveHuobiResponse('/market/tickers', {})
     let lastTickers = globals.lastTickers
     let curTickers = resp1.data
-    let allSymbols = await retrieveAllSymbols_stair()
-    
+    let sorted = tickersSinceLastTime(lastTickers, curTickers, globals.allSymbols)
+    globals.lastTickers = curTickers
+    return sorted
+}
+
+export async function sortAllTickers() {
+    return _sortAllTickers()
+        .then(x => {
+            for (const u of quoteCoins) {
+                let sbs = x[u]
+                if (sbs) {
+                    sbs = sbs.filter(x => {
+                        let op = x.open
+                        let cl = x.close
+                        let incr = (cl - op) / op
+                        return op > 0 && cl > 0 && incr > 0.03
+                    })
+                }
+            }
+            return x
+        })
 }

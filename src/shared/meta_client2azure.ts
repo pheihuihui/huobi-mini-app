@@ -1,4 +1,4 @@
-import { TQuoteCoin } from "../server/meta_mongo"
+import { TQuoteCoin } from "./helper"
 import { TResp_v1_order_orders_$order_id$ } from "./meta_response"
 
 type TMethod = 'GET' | 'POST'
@@ -35,6 +35,8 @@ type TOrderQuery = TBaseClient2Azure<
 
 type TTestNoParas = TBaseClient2Azure<'GET', never, never, string>
 
+type TServerStatus = TBaseClient2Azure<'GET', never, never, any>
+
 //////////////////////
 
 type TFilter<Base, Condition> = {
@@ -47,6 +49,7 @@ type TBaseMap = {
     '/sell': TSell
     '/query/order/:orderID': TOrderQuery
     '/test': TTestNoParas
+    '/server/status': TServerStatus
 }
 
 export type TClientReqAndRespMap = TFilter<TBaseMap, TBaseClient2Azure<TMethod, any, any, any>>
