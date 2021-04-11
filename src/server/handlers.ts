@@ -41,8 +41,8 @@ const query_symbols_stair: THandlerInfo<'/query/symbols/stair'> = {
     }
 }
 
-const query_server_status: THandlerInfo<'/server/status'> = {
-    name: '/server/status',
+const query_server_status: THandlerInfo<'/query/server/status'> = {
+    name: '/query/server/status',
     type: 'GET',
     handler: async (req, res) => {
         let ret = {
@@ -58,5 +58,6 @@ const query_server_status: THandlerInfo<'/server/status'> = {
 export const handlers: THandlerInfo<any>[] = [
     post_buy,
     post_sell,
-    query_symbols_stair
+    query_symbols_stair,
+    query_server_status
 ]

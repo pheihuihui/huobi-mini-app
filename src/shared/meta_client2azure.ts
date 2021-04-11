@@ -49,7 +49,7 @@ type TBaseMap = {
     '/sell': TSell
     '/query/order/:orderID': TOrderQuery
     '/test': TTestNoParas
-    '/server/status': TServerStatus
+    '/query/server/status': TServerStatus
 }
 
 export type TClientReqAndRespMap = TFilter<TBaseMap, TBaseClient2Azure<TMethod, any, any, any>>
