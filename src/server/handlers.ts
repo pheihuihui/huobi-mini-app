@@ -44,7 +44,7 @@ const query_symbols_stair: THandlerInfo<'/query/symbols/stair'> = {
 const query_server_status: THandlerInfo<'/server/status'> = {
     name: '/server/status',
     type: 'GET',
-    handler: (req, res) => {
+    handler: async (req, res) => {
         let ret = {
             lastTickers: globals.lastTickers,
             holdings: globals.holdings,
