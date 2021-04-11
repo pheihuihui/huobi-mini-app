@@ -65,7 +65,7 @@
     sendRequest("/sell", {type: "POST", body: {coin: cur}}).then((x) => console.log(x));
   }
   function testConnection() {
-    sendRequest("/query/symbols/stair", {type: "GET"}).then((x) => console.log(x));
+    sendRequest("/server/status", {type: "GET"}).then((x) => console.log(x));
   }
   function attachFunctions2Window() {
     window.allIn = allIn;
