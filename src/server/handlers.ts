@@ -55,9 +55,22 @@ const query_server_status: THandlerInfo<'/query/server/status'> = {
     }
 }
 
+const query_account_status: THandlerInfo<'/query/account/status'> = {
+    name: '/query/account/status',
+    type: 'GET',
+    handler: async (req, res) => {
+        let ret = {
+            id: globals.accountID,
+            status: globals.state
+        }
+        res.json(ret)
+    }
+}
+
 export const handlers: THandlerInfo<any>[] = [
     post_buy,
     post_sell,
     query_symbols_stair,
-    query_server_status
+    query_server_status,
+    query_account_status
 ]

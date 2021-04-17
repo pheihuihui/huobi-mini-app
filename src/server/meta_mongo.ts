@@ -40,6 +40,9 @@ export interface IModels {
     serverLog: {
         serverLog: string
     }
+    newCurrencys: {
+        newCurrencys: string[]
+    }
 }
 
 export type TModelName = keyof IModels

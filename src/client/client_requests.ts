@@ -61,7 +61,7 @@ function allOut(cur: string) {
 }
 
 function testConnection() {
-    sendRequest('/query/server/status', { type: 'GET' })
+    sendRequest('/query/account/status', { type: 'GET' })
         .then(x => console.log(x))
 }
 

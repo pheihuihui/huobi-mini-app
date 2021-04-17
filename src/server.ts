@@ -4,7 +4,7 @@ import { middles } from './server/middle'
 import cors from 'cors'
 import bodyParser from 'body-parser'
 import { handlers } from './server/handlers'
-import { cron_every_hour } from './server/schedules'
+import { startCrons } from './server/schedules'
 
 const app = express()
 
@@ -29,5 +29,5 @@ initGlobalStatus()
     .then(() => {
         const port = process.env.PORT || 3000
         app.listen(port)
-        cron_every_hour.start()
+        startCrons()
     })

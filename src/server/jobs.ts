@@ -126,21 +126,26 @@ export async function retrieveAllSymbols_stair() {
 }
 
 export async function retriveNewCurrencys() {
-    return retrieveHuobiResponse('/v1/common/currencys', {})
-        .then(x => {
-            let curs = x.data
-            let addedCurs: string[] = []
-            let removedCurs: string[] = []
-            addedCurs = added(globals.currencys, curs)
-            removedCurs = removed(globals.currencys, curs)
-            if (addedCurs.length > 0) {
-                globals.currencys = curs
-                return {
-                    AddedCurrencys: addedCurs,
-                    removedCurrencys: removedCurs
-                }
+    let res: Record<string, string[]> = {}
+    let resp1 = await retrieveHuobiResponse('/v1/common/currencys', {})
+    let curs = resp1.data
+    let resp2 = await retrieveHuobiResponse('/v1/common/symbols', {})
+    let sbs = resp2.data
+    let addedCurs = added(globals.currencys, curs)
+    if (addedCurs.length > 0) {
+        for (const u of addedCurs) {
+            let filt = sbs.filter(x => x["base-currency"] == u).map(x => `${x["base-currency"]}--${x["quote-currency"]}`)
+            if (filt.length > 0) {
+                res[u] = filt
             }
-        })
+        }
+    }
+    let keys = Object.keys(res)
+    if (keys.length > 0) {
+        globals.currencys = curs
+        insertNewItem('newCurrencys', { newCurrencys: addedCurs })
+        return res
+    }
 }
 
 export async function reconnectSocket() {
@@ -164,25 +169,6 @@ export async function retrieveHoldings() {
     return res
 }
 
-export async function buyNewCoin(coin: string) {
-    let text = new Date().toUTCString()
-    text += `\n${coin}`
-    let resp1 = await buy(coin)
-    let resp2 = await retrieveHuobiResponse('/v1/order/orders/{order-id}', { path: resp1 })
-    text += '\n'
-    if (resp2.status == 'ok') {
-        text += JSON.stringify(resp2.data)
-        insertNewItem('info', { text: text })
-    }
-    if (resp2.status == 'error') {
-        await transfer2btc()
-        let resp3 = await buy(coin, { quoteCoin: 'btc' })
-        let resp4 = await retrieveHuobiResponse('/v1/order/orders/{order-id}', { path: resp3 })
-        text += JSON.stringify(resp4.data)
-        insertNewItem('info', { text: text })
-    }
-}
-
 async function _sortAllTickers() {
     let resp1 = await retrieveHuobiResponse('/market/tickers', {})
     let lastTickers = globals.lastTickers
@@ -198,12 +184,19 @@ export async function sortAllTickers() {
             for (const u of quoteCoins) {
                 let sbs = x[u]
                 if (sbs) {
-                    sbs = sbs.filter(x => {
+                    let sbs_rise = sbs.filter(x => {
                         let op = x.open
                         let cl = x.close
                         let incr = (cl - op) / op
                         return op > 0 && cl > 0 && incr > 0.03
                     })
+                    let sbs_fall = sbs.filter(x => {
+                        let op = x.open
+                        let cl = x.close
+                        let incr = (cl - op) / op
+                        return op > 0 && cl > 0 && incr < -0.03
+                    })
+                    sbs = sbs_rise.concat(sbs_fall)
                 }
             }
             return x

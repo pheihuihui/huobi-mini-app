@@ -37,6 +37,8 @@ type TTestNoParas = TBaseClient2Azure<'GET', never, never, string>
 
 type TServerStatus = TBaseClient2Azure<'GET', never, never, any>
 
+type TAccountStatus = TBaseClient2Azure<'GET', never, never, any>
+
 //////////////////////
 
 type TFilter<Base, Condition> = {
@@ -50,6 +52,7 @@ type TBaseMap = {
     '/query/order/:orderID': TOrderQuery
     '/test': TTestNoParas
     '/query/server/status': TServerStatus
+    '/query/account/status': TAccountStatus
 }
 
 export type TClientReqAndRespMap = TFilter<TBaseMap, TBaseClient2Azure<TMethod, any, any, any>>
