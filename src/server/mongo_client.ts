@@ -38,7 +38,10 @@ export async function insertNewItem<T extends TModelName>(type: T, para: IModels
 }
 
 export async function readItems<T extends TModelName>(type: T) {
-
+    let coll = await getCollection(type)
+    let res = await coll.find({ type: type } as FilterQuery<T>).limit(10)
+    let ret = await res.toArray()
+    return ret
 }
 
 export async function readOneItem<T extends TModelName>(type: T) {

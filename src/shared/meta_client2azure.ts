@@ -26,6 +26,13 @@ type TSell = TBaseClient2Azure<
     TResp_v1_order_orders_$order_id$
 >
 
+type TTestBuyNewCoin = TBaseClient2Azure<
+    'POST',
+    never,
+    { setCurrencys: string[] },
+    string[]
+>
+
 type TOrderQuery = TBaseClient2Azure<
     'GET',
     { orderID: string },
@@ -39,6 +46,12 @@ type TServerStatus = TBaseClient2Azure<'GET', never, never, any>
 
 type TAccountStatus = TBaseClient2Azure<'GET', never, never, any>
 
+
+export type TRise = { timestamp: number, symbol: string, rate: number }
+export type TFall = { timestamp: number, symbol: string, rate: number }
+type TQueryRises = TBaseClient2Azure<'GET', never, never, Array<TRise>>
+type TQueryFalls = TBaseClient2Azure<'GET', never, never, Array<TFall>>
+
 //////////////////////
 
 type TFilter<Base, Condition> = {
@@ -51,8 +64,11 @@ type TBaseMap = {
     '/sell': TSell
     '/query/order/:orderID': TOrderQuery
     '/test': TTestNoParas
+    '/test/buy/new/coin': TTestBuyNewCoin
     '/query/server/status': TServerStatus
     '/query/account/status': TAccountStatus
+    '/query/rises': TQueryRises
+    '/query/falls': TQueryFalls
 }
 
 export type TClientReqAndRespMap = TFilter<TBaseMap, TBaseClient2Azure<TMethod, any, any, any>>

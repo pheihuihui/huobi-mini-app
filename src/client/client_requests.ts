@@ -65,11 +65,29 @@ function testConnection() {
         .then(x => console.log(x))
 }
 
+function showRises() {
+    sendRequest('/query/rises', { type: 'GET' })
+        .then(x => console.log(x))
+}
+
+function showFalls() {
+    sendRequest('/query/falls', { type: 'GET' })
+        .then(x => console.log(x))
+}
+
+function testBuyNewCoin(curs: string[]) {
+    sendRequest('/test/buy/new/coin', { type: 'POST', body: { setCurrencys: curs } })
+        .then(x => console.log(x))
+}
+
 declare global {
     interface Window {
         allIn: any
         allOut: any
         testConnection: any
+        testBuyNewCoin: any
+        showRises: any
+        showFalls: any
     }
 }
 
@@ -77,4 +95,7 @@ export function attachFunctions2Window() {
     window.allIn = allIn
     window.allOut = allOut
     window.testConnection = testConnection
+    window.testBuyNewCoin = testBuyNewCoin
+    window.showFalls = showFalls
+    window.showRises = showRises
 }
