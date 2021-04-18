@@ -67,10 +67,22 @@
   function testConnection() {
     sendRequest("/query/account/status", {type: "GET"}).then((x) => console.log(x));
   }
+  function showRises() {
+    sendRequest("/query/rises", {type: "GET"}).then((x) => console.log(x));
+  }
+  function showFalls() {
+    sendRequest("/query/falls", {type: "GET"}).then((x) => console.log(x));
+  }
+  function testBuyNewCoin(curs) {
+    sendRequest("/test/buy/new/coin", {type: "POST", body: {setCurrencys: curs}}).then((x) => console.log(x));
+  }
   function attachFunctions2Window() {
     window.allIn = allIn;
     window.allOut = allOut;
     window.testConnection = testConnection;
+    window.testBuyNewCoin = testBuyNewCoin;
+    window.showFalls = showFalls;
+    window.showRises = showRises;
   }
 
   // src/client/client_credentials.ts
