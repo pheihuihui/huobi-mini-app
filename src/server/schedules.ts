@@ -71,6 +71,6 @@ const cron_every_day = ncron.schedule('0 0 0 * * *', () => {
 
 
 export function startCrons() {
-    cron_every_10sec.start()
+    // cron_every_10sec.start()
     cron_every_hour.start()
 }

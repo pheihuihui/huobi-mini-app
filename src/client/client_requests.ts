@@ -1,3 +1,4 @@
+import { TModelName } from "../server/meta_mongo"
 import { combineUrl } from "../shared/helper"
 import { TClientReqAndRespMap } from "../shared/meta_client2azure"
 
@@ -80,6 +81,11 @@ function testBuyNewCoin(curs: string[]) {
         .then(x => console.log(x))
 }
 
+function countItems(itemType: TModelName) {
+    sendRequest('/query/count/:itemType', { type: 'GET', paths: { itemType: itemType } })
+        .then(x => console.log(x))
+}
+
 declare global {
     interface Window {
         allIn: any
@@ -88,6 +94,7 @@ declare global {
         testBuyNewCoin: any
         showRises: any
         showFalls: any
+        countItems: any
     }
 }
 
@@ -98,4 +105,5 @@ export function attachFunctions2Window() {
     window.testBuyNewCoin = testBuyNewCoin
     window.showFalls = showFalls
     window.showRises = showRises
+    window.countItems = countItems
 }

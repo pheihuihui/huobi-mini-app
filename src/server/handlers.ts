@@ -1,15 +1,14 @@
-import { json } from 'body-parser'
 import express from 'express'
 import { TClientReqAndRespMap, TFall, TRise } from '../shared/meta_client2azure'
 import { globals } from './global'
 import { buy, retrieveAllSymbols_stair, sell } from './jobs'
-import { readItems } from './mongo_client'
+import { countItems, readItems } from './mongo_client'
 import { retrieveHuobiResponse } from './request'
 
 type THandlerInfo<T extends keyof TClientReqAndRespMap> = {
     name: T,
     type: TClientReqAndRespMap[T]['requestType'],
-    handler: (req: express.Request<{}, {}, TClientReqAndRespMap[T]['requestBody']>, res: express.Response<TClientReqAndRespMap[T]['response']>) => void
+    handler: (req: express.Request<TClientReqAndRespMap[T]['requestPath'], {}, TClientReqAndRespMap[T]['requestBody']>, res: express.Response<TClientReqAndRespMap[T]['response']>) => void
 }
 
 const post_buy: THandlerInfo<'/buy'> = {
@@ -98,6 +97,16 @@ const query_falls: THandlerInfo<'/query/falls'> = {
     }
 }
 
+const query_count: THandlerInfo<'/query/count/:itemType'> = {
+    name: '/query/count/:itemType',
+    type: 'GET',
+    handler: async (req, res) => {
+        let para = req.params.itemType
+        let ret = await countItems(para)
+        res.json(ret)
+    }
+}
+
 export const handlers: THandlerInfo<any>[] = [
     post_buy,
     post_sell,
@@ -105,5 +114,6 @@ export const handlers: THandlerInfo<any>[] = [
     query_server_status,
     query_account_status,
     query_falls,
-    query_rises
+    query_rises,
+    query_count
 ]

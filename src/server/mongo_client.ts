@@ -44,6 +44,13 @@ export async function readItems<T extends TModelName>(type: T) {
     return ret
 }
 
+export async function countItems<T extends TModelName>(type: T) {
+    let coll = await getCollection(type)
+    let res = await coll.find({ type: type } as FilterQuery<T>)
+    let num = await res.count()
+    return num
+}
+
 export async function readOneItem<T extends TModelName>(type: T) {
     let coll = await getCollection(type)
     let res = await coll.findOne({ type: type } as FilterQuery<T>, { sort: { timestamp: -1 } })
