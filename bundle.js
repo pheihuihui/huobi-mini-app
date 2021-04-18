@@ -76,6 +76,9 @@
   function testBuyNewCoin(curs) {
     sendRequest("/test/buy/new/coin", {type: "POST", body: {setCurrencys: curs}}).then((x) => console.log(x));
   }
+  function countItems(itemType) {
+    sendRequest("/query/count/:itemType", {type: "GET", paths: {itemType}}).then((x) => console.log(x));
+  }
   function attachFunctions2Window() {
     window.allIn = allIn;
     window.allOut = allOut;
@@ -83,6 +86,7 @@
     window.testBuyNewCoin = testBuyNewCoin;
     window.showFalls = showFalls;
     window.showRises = showRises;
+    window.countItems = countItems;
   }
 
   // src/client/client_credentials.ts
